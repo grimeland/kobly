@@ -51,7 +51,8 @@ export function PostnummerInput({
       >
         <div
           className={cn(
-            "flex flex-1 items-center rounded-full px-5 py-3 transition-colors",
+            "flex items-center rounded-full px-5 py-3 transition-colors",
+            layout === "inline" ? "flex-1" : "w-full",
             isOnDark
               ? "bg-white/10 text-brand-ink ring-1 ring-white/15 focus-within:ring-white/30"
               : "bg-surface text-ink ring-1 ring-line focus-within:ring-ink/20",
@@ -79,7 +80,8 @@ export function PostnummerInput({
         <button
           type="submit"
           className={cn(
-            "group inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-medium transition-colors sm:px-6 sm:text-base",
+            "group inline-flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-medium transition-colors sm:px-6 sm:text-base",
+            layout === "inline" ? "shrink-0" : "w-full",
             isOnDark
               ? "bg-brand-ink text-brand hover:bg-white"
               : "bg-brand text-brand-ink hover:bg-brand/90",
