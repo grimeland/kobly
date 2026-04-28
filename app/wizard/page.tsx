@@ -1,12 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/marketing/Logo";
-import { RadioCard } from "@/components/wizard/RadioCard";
 import { Illustration } from "@/components/wizard/Illustration";
 
 type FlytteType = "privat" | "bedrift" | "internasjonal";
@@ -42,6 +42,7 @@ export default function WizardPage() {
   const fraFraUrl = params.get("fra") ?? "";
 
   const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [submitted, setSubmitted] = useState(false);
   const [data, setData] = useState<WizardData>({
     flytteType: "",
@@ -91,13 +92,18 @@ export default function WizardPage() {
     }
   }, [step, data]);
 
+  const goTo = (target: number) => {
+    setDirection(target > step ? 1 : -1);
+    setStep(target);
+  };
   const next = () => {
     if (!valid) return;
-    if (step < TOTAL_STEPS) setStep(step + 1);
+    if (step < TOTAL_STEPS) goTo(step + 1);
     else submit();
   };
-
-  const back = () => setStep(Math.max(1, step - 1));
+  const back = () => {
+    if (step > 1) goTo(step - 1);
+  };
 
   const submit = () => {
     console.log("Wizard submitted:", data);
@@ -107,131 +113,238 @@ export default function WizardPage() {
   if (submitted) return <ThankYou />;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="px-6 sm:px-10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between py-4">
-          <Link href="/" aria-label="Kobly hjem" className="no-underline">
-            <Logo />
-          </Link>
-          <Link
-            href="/"
-            aria-label="Lukk"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-ink/5"
-          >
-            <X className="h-5 w-5" />
-          </Link>
-        </div>
-        <div className="mx-auto h-1 w-full max-w-6xl overflow-hidden rounded-full bg-line">
-          <div
-            className="h-full bg-accent-lime transition-all duration-300"
-            style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
-          />
-        </div>
-      </header>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-bg">
+      {/* Bakgrunnsbilde med overlay */}
+      <Image
+        src="/images/boxes-and-plants.jpg"
+        alt=""
+        aria-hidden
+        fill
+        priority
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-bg/85" aria-hidden />
 
-      <main className="flex-1 px-6 pt-12 pb-32 sm:px-10 sm:pt-16 lg:pt-20">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-16">
-          <div className="order-2 lg:order-1">
-            <p className="text-sm text-ink-muted">
-              Steg {step} av {TOTAL_STEPS}
-            </p>
+      {/* Logo øverst */}
+      <Link
+        href="/"
+        aria-label="Kobly hjem"
+        className="absolute left-1/2 top-7 z-10 -translate-x-1/2"
+      >
+        <Logo />
+      </Link>
 
-            {step === 1 && (
-              <Step1
-                value={data.flytteType}
-                onChange={(v) => update("flytteType", v)}
-              />
-            )}
-            {step === 2 && (
-              <Step2
-                fra={data.fra}
-                til={data.til}
-                onFra={(v) => update("fra", v)}
-                onTil={(v) => update("til", v)}
-              />
-            )}
-            {step === 3 && (
-              <Step3
-                boligtype={data.boligtype}
-                rooms={data.rooms}
-                onBoligtype={(v) => update("boligtype", v)}
-                onRooms={(v) => update("rooms", v)}
-              />
-            )}
-            {step === 4 && (
-              <Step4
-                date={data.flyttedato}
-                fleksibel={data.fleksibel}
-                onDate={(v) => update("flyttedato", v)}
-                onFleksibel={(v) => update("fleksibel", v)}
-              />
-            )}
-            {step === 5 && (
-              <Step5
-                selected={data.tilleggstjenester}
-                onToggle={toggleTillegg}
-              />
-            )}
-            {step === 6 && (
-              <Step6
-                navn={data.navn}
-                telefon={data.telefon}
-                epost={data.epost}
-                onNavn={(v) => update("navn", v)}
-                onTelefon={(v) => update("telefon", v)}
-                onEpost={(v) => update("epost", v)}
-              />
-            )}
+      {/* Kort */}
+      <div
+        className={cn(
+          "relative z-10 m-4 flex w-full max-w-[1060px] flex-col rounded-2xl bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.14),0_4px_16px_rgba(0,0,0,0.06)]",
+          "min-h-[640px] sm:m-6",
+        )}
+      >
+        <div className="flex flex-1 flex-col lg:flex-row">
+          {/* Venstre kolonne — innhold */}
+          <div className="relative flex flex-1 flex-col p-6 pb-24 sm:p-9 sm:pb-24 lg:flex-[0_0_58%] lg:p-11 lg:pb-24">
+            {/* Segmenter */}
+            <div className="mb-5 flex gap-1">
+              {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-0.5 flex-1 rounded-full transition-colors duration-300",
+                    i < step ? "bg-ink" : "bg-ink/10",
+                  )}
+                />
+              ))}
+            </div>
+
+            {/* Animert steg-innhold */}
+            <div
+              key={step}
+              className={cn(
+                "flex flex-1 flex-col gap-3.5",
+                direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
+              )}
+            >
+              <span className="font-display text-[11px] tracking-[0.15em] text-ink/35 uppercase">
+                Steg {step} av {TOTAL_STEPS}
+              </span>
+
+              {step === 1 && (
+                <Step1
+                  value={data.flytteType}
+                  onChange={(v) => update("flytteType", v)}
+                />
+              )}
+              {step === 2 && (
+                <Step2
+                  fra={data.fra}
+                  til={data.til}
+                  onFra={(v) => update("fra", v)}
+                  onTil={(v) => update("til", v)}
+                />
+              )}
+              {step === 3 && (
+                <Step3
+                  boligtype={data.boligtype}
+                  rooms={data.rooms}
+                  onBoligtype={(v) => update("boligtype", v)}
+                  onRooms={(v) => update("rooms", v)}
+                />
+              )}
+              {step === 4 && (
+                <Step4
+                  date={data.flyttedato}
+                  fleksibel={data.fleksibel}
+                  onDate={(v) => update("flyttedato", v)}
+                  onFleksibel={(v) => update("fleksibel", v)}
+                />
+              )}
+              {step === 5 && (
+                <Step5
+                  selected={data.tilleggstjenester}
+                  onToggle={toggleTillegg}
+                />
+              )}
+              {step === 6 && (
+                <Step6
+                  navn={data.navn}
+                  telefon={data.telefon}
+                  epost={data.epost}
+                  onNavn={(v) => update("navn", v)}
+                  onTelefon={(v) => update("telefon", v)}
+                  onEpost={(v) => update("epost", v)}
+                />
+              )}
+            </div>
+
+            {/* Bunn-nav */}
+            <div className="absolute right-6 bottom-6 left-6 flex items-center justify-between sm:right-9 sm:bottom-7 sm:left-9 lg:right-11 lg:left-11">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={back}
+                  className="text-sm text-ink/40 transition-colors hover:text-ink/70"
+                >
+                  Tilbake
+                </button>
+              ) : (
+                <span />
+              )}
+              <button
+                type="button"
+                onClick={next}
+                disabled={!valid}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-lg px-7 py-2.5 text-sm font-medium transition-colors",
+                  valid
+                    ? "bg-brand text-brand-ink hover:bg-brand/90"
+                    : "cursor-not-allowed bg-ink/10 text-ink/30",
+                )}
+              >
+                {step === TOTAL_STEPS ? "Send forespørsel" : "Neste"}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
 
-          <div className="order-1 hidden lg:order-2 lg:block">
-            <div className="mx-auto aspect-square max-w-md">
-              <Illustration step={step as 1 | 2 | 3 | 4 | 5 | 6} />
+          {/* Høyre kolonne — illustrasjon */}
+          <div className="hidden p-4 pl-0 lg:flex lg:flex-1">
+            <div
+              key={`art-${step}`}
+              className="wizard-fade-in relative flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-bg"
+            >
+              <div className="aspect-square w-full max-w-md p-10">
+                <Illustration step={step as 1 | 2 | 3 | 4 | 5 | 6} />
+              </div>
             </div>
           </div>
         </div>
-      </main>
-
-      <nav className="sticky bottom-0 left-0 right-0 border-t border-line bg-bg/90 px-6 py-4 backdrop-blur-md sm:px-10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={back}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition-colors",
-              step === 1
-                ? "invisible"
-                : "text-ink ring-1 ring-line hover:bg-ink/5",
-            )}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Tilbake
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            disabled={!valid}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors",
-              valid
-                ? "bg-brand text-brand-ink hover:bg-brand/90"
-                : "cursor-not-allowed bg-line text-ink-muted",
-            )}
-          >
-            {step === TOTAL_STEPS ? "Send forespørsel" : "Neste"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      </nav>
+      </div>
     </div>
   );
 }
 
-function StepHeader({ title }: { title: string }) {
+function StepHeader({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: string;
+}) {
   return (
-    <h1 className="mt-3 font-serif text-3xl font-semibold leading-[1.1] text-ink sm:text-4xl lg:text-5xl">
-      {title}
-    </h1>
+    <>
+      <h1 className="m-0 font-serif text-3xl font-medium leading-[1.15] tracking-[-0.01em] text-ink sm:text-4xl lg:text-[2.75rem]">
+        {title}
+      </h1>
+      {subtitle ? (
+        <p className="-mt-1 text-sm text-ink/40">{subtitle}</p>
+      ) : null}
+    </>
+  );
+}
+
+function PillButton({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center justify-center rounded-lg border-[1.5px] px-4 py-4 text-sm transition-colors",
+        selected
+          ? "border-brand bg-brand text-brand-ink"
+          : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function BlockCard({
+  selected,
+  title,
+  description,
+  onSelect,
+}: {
+  selected: boolean;
+  title: string;
+  description?: string;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        "flex w-full items-start gap-4 rounded-xl border-[1.5px] p-5 text-left transition-colors",
+        selected
+          ? "border-brand bg-[#EDE5D8]"
+          : "border-transparent bg-[#F3EEE3] hover:bg-[#E8E0D0]",
+      )}
+    >
+      <span
+        className={cn(
+          "mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors",
+          selected ? "border-brand bg-brand" : "border-ink/20",
+        )}
+      >
+        {selected ? <Check className="h-3 w-3 text-brand-ink" /> : null}
+      </span>
+      <span className="flex-1">
+        <span className="block text-base font-medium text-ink">{title}</span>
+        {description ? (
+          <span className="mt-0.5 block text-sm text-ink/50">{description}</span>
+        ) : null}
+      </span>
+    </button>
   );
 }
 
@@ -245,20 +358,20 @@ function Step1({
   return (
     <>
       <StepHeader title="Hva slags flytting er det?" />
-      <div className="mt-8 flex flex-col gap-3">
-        <RadioCard
+      <div className="mt-4 flex flex-col gap-2.5">
+        <BlockCard
           selected={value === "privat"}
           title="Privat flytting"
           description="Leilighet, hus eller hybel"
           onSelect={() => onChange("privat")}
         />
-        <RadioCard
+        <BlockCard
           selected={value === "bedrift"}
           title="Bedriftsflytting"
           description="Kontor, lager eller næringslokaler"
           onSelect={() => onChange("bedrift")}
         />
-        <RadioCard
+        <BlockCard
           selected={value === "internasjonal"}
           title="Internasjonal"
           description="Til eller fra utlandet"
@@ -282,11 +395,11 @@ function Step2({
 }) {
   return (
     <>
-      <StepHeader title="Hvor skal du flytte?" />
-      <p className="mt-3 text-base text-ink-muted">
-        Vi bruker postnummer for å koble deg med byråer i ditt område.
-      </p>
-      <div className="mt-8 flex flex-col gap-4">
+      <StepHeader
+        title="Hvor skal du flytte?"
+        subtitle="Vi bruker postnummer for å koble deg med byråer i ditt område"
+      />
+      <div className="mt-4 flex flex-col gap-3.5">
         <PostnummerField label="Fra postnummer" value={fra} onChange={onFra} />
         <PostnummerField label="Til postnummer" value={til} onChange={onTil} />
       </div>
@@ -305,7 +418,9 @@ function PostnummerField({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-ink">{label}</span>
+      <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
+        {label}
+      </span>
       <input
         type="text"
         inputMode="numeric"
@@ -314,7 +429,7 @@ function PostnummerField({
         value={value}
         onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
         placeholder="0000"
-        className="mt-2 w-full rounded-xl bg-surface px-5 py-3 text-base text-ink ring-1 ring-line outline-none transition-colors focus:ring-ink/30"
+        className="w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
       />
     </label>
   );
@@ -341,39 +456,37 @@ function Step3({
   return (
     <>
       <StepHeader title="Hva slags bolig er det?" />
-      <div className="mt-8">
-        <p className="text-sm font-medium text-ink">Boligtype</p>
-        <div className="mt-3 grid grid-cols-2 gap-3">
+      <div className="mt-2">
+        <p className="mb-2 text-xs uppercase tracking-[0.06em] text-ink/40">
+          Boligtype
+        </p>
+        <div className="grid grid-cols-2 gap-2">
           {types.map((t) => (
-            <button
+            <PillButton
               key={t.value}
-              type="button"
+              selected={boligtype === t.value}
               onClick={() => onBoligtype(t.value)}
-              className={cn(
-                "rounded-xl bg-surface px-4 py-3 text-sm font-medium transition-all ring-1",
-                boligtype === t.value
-                  ? "ring-2 ring-brand text-ink"
-                  : "ring-line text-ink hover:ring-ink/20",
-              )}
             >
               {t.label}
-            </button>
+            </PillButton>
           ))}
         </div>
       </div>
-      <div className="mt-8">
-        <p className="text-sm font-medium text-ink">Antall rom</p>
-        <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-4">
+        <p className="mb-2 text-xs uppercase tracking-[0.06em] text-ink/40">
+          Antall rom
+        </p>
+        <div className="flex flex-wrap gap-2">
           {roomOptions.map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => onRooms(r)}
               className={cn(
-                "h-12 min-w-12 rounded-full bg-surface px-4 text-sm font-medium ring-1 transition-all",
+                "h-12 min-w-12 rounded-lg border-[1.5px] px-4 text-sm font-medium transition-colors",
                 rooms === r
-                  ? "ring-2 ring-brand"
-                  : "ring-line hover:ring-ink/20",
+                  ? "border-brand bg-brand text-brand-ink"
+                  : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
               )}
             >
               {r}
@@ -398,13 +511,15 @@ function Step4({
 }) {
   return (
     <>
-      <StepHeader title="Når skal du flytte?" />
-      <p className="mt-3 text-base text-ink-muted">
-        Velg en dato eller la oss vite om du er fleksibel.
-      </p>
-      <div className="mt-8">
+      <StepHeader
+        title="Når skal du flytte?"
+        subtitle="Velg en dato eller la oss vite om du er fleksibel"
+      />
+      <div className="mt-2 flex flex-col gap-4">
         <label className="block">
-          <span className="text-sm font-medium text-ink">Ønsket flyttedato</span>
+          <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
+            Ønsket flyttedato
+          </span>
           <input
             type="date"
             value={date}
@@ -414,7 +529,7 @@ function Step4({
             }}
             disabled={fleksibel}
             className={cn(
-              "mt-2 w-full rounded-xl bg-surface px-5 py-3 text-base text-ink ring-1 ring-line outline-none transition-colors focus:ring-ink/30",
+              "w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand",
               fleksibel && "opacity-50",
             )}
           />
@@ -426,19 +541,19 @@ function Step4({
             if (!fleksibel) onDate("");
           }}
           className={cn(
-            "mt-4 inline-flex items-center gap-3 rounded-xl bg-surface px-5 py-3 text-sm font-medium ring-1 transition-all",
-            fleksibel ? "ring-2 ring-brand" : "ring-line hover:ring-ink/20",
+            "inline-flex items-center gap-3 self-start rounded-full border-[1.5px] border-dashed px-6 py-3 text-sm transition-colors",
+            fleksibel
+              ? "border-solid border-brand bg-[#EDE5D8] text-ink"
+              : "border-ink/20 text-ink/60 hover:border-ink/40",
           )}
         >
           <span
             className={cn(
-              "inline-flex h-5 w-5 items-center justify-center rounded transition-colors",
-              fleksibel ? "bg-brand" : "ring-1 ring-line",
+              "inline-flex h-5 w-5 items-center justify-center rounded-full border-[1.5px] transition-colors",
+              fleksibel ? "border-brand bg-brand" : "border-ink/20",
             )}
           >
-            {fleksibel ? (
-              <Check className="h-3.5 w-3.5 text-brand-ink" />
-            ) : null}
+            {fleksibel ? <Check className="h-3 w-3 text-brand-ink" /> : null}
           </span>
           Jeg er fleksibel på datoen
         </button>
@@ -456,11 +571,11 @@ function Step5({
 }) {
   return (
     <>
-      <StepHeader title="Trenger du noe ekstra?" />
-      <p className="mt-3 text-base text-ink-muted">
-        Velg én eller flere. Du kan hoppe over dette steget.
-      </p>
-      <div className="mt-8 grid gap-2 sm:grid-cols-2">
+      <StepHeader
+        title="Trenger du noe ekstra?"
+        subtitle="Velg én eller flere — du kan hoppe over"
+      />
+      <div className="mt-2 grid gap-2 sm:grid-cols-2">
         {TILLEGG.map((t) => {
           const isSelected = selected.includes(t);
           return (
@@ -469,20 +584,20 @@ function Step5({
               type="button"
               onClick={() => onToggle(t)}
               className={cn(
-                "flex items-center gap-3 rounded-xl bg-surface px-4 py-3 text-left text-sm font-medium ring-1 transition-all",
+                "flex items-center gap-3 rounded-xl border-[1.5px] px-4 py-3.5 text-left text-sm transition-colors",
                 isSelected
-                  ? "ring-2 ring-brand"
-                  : "ring-line hover:ring-ink/20",
+                  ? "border-brand bg-[#EDE5D8] text-ink"
+                  : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
               )}
             >
               <span
                 className={cn(
-                  "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors",
-                  isSelected ? "bg-brand" : "ring-1 ring-line",
+                  "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors",
+                  isSelected ? "border-brand bg-brand" : "border-ink/20",
                 )}
               >
                 {isSelected ? (
-                  <Check className="h-3.5 w-3.5 text-brand-ink" />
+                  <Check className="h-3 w-3 text-brand-ink" />
                 ) : null}
               </span>
               {t}
@@ -511,11 +626,11 @@ function Step6({
 }) {
   return (
     <>
-      <StepHeader title="Hvem skal vi kontakte?" />
-      <p className="mt-3 text-base text-ink-muted">
-        Vi kobler deg med tre byråer. Du hører fra dem innen 24 timer.
-      </p>
-      <div className="mt-8 flex flex-col gap-4">
+      <StepHeader
+        title="La oss ta kontakt"
+        subtitle="Vi kobler deg med tre byråer. Du hører fra dem innen 24 timer."
+      />
+      <div className="mt-2 grid gap-3.5 sm:grid-cols-2">
         <TextField
           label="Navn"
           value={navn}
@@ -529,13 +644,15 @@ function Step6({
           placeholder="+47 000 00 000"
           inputMode="tel"
         />
-        <TextField
-          label="E-post"
-          value={epost}
-          onChange={onEpost}
-          placeholder="ola@eksempel.no"
-          type="email"
-        />
+        <div className="sm:col-span-2">
+          <TextField
+            label="E-post"
+            value={epost}
+            onChange={onEpost}
+            placeholder="ola@eksempel.no"
+            type="email"
+          />
+        </div>
       </div>
     </>
   );
@@ -558,14 +675,16 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-ink">{label}</span>
+      <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
+        {label}
+      </span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
-        className="mt-2 w-full rounded-xl bg-surface px-5 py-3 text-base text-ink ring-1 ring-line outline-none transition-colors focus:ring-ink/30"
+        className="w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
       />
     </label>
   );
@@ -573,11 +692,11 @@ function TextField({
 
 function ThankYou() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-6 text-center">
       <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-accent-lime">
         <Check className="h-8 w-8 text-[#3D5507]" strokeWidth={2.5} />
       </span>
-      <h1 className="mt-6 max-w-xl font-serif text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
+      <h1 className="mt-6 max-w-xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
         Takk for forespørselen!
       </h1>
       <p className="mt-5 max-w-md text-base text-ink-muted sm:text-lg">
