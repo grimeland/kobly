@@ -52,37 +52,39 @@ const partners = [
 
 export function Trust() {
   return (
-    <section className="px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
-      <div className="mx-auto flex max-w-3xl flex-col items-start text-left lg:items-center lg:text-center">
-        <h2 className="max-w-md text-3xl font-bold leading-[1.1] tracking-tight text-ink sm:text-4xl">
-          Norges smarteste tilbudstjeneste
-        </h2>
-        <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">
-          Kobly flytter ikke selv — vi samler byråene som gjør det best, og
-          kobler deg med tre som passer akkurat din flytting.
-        </p>
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <Link
-            href="/wizard"
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90"
-          >
-            Få tilbud gratis
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <a
-            href="#"
-            className="inline-flex items-center rounded-full px-5 py-3 text-sm font-medium text-ink ring-1 ring-line transition-colors hover:bg-ink/5"
-          >
-            Møt byråene
-          </a>
-        </div>
-      </div>
-      <div className="mx-auto mt-10 flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:mt-12 sm:gap-x-14">
-        {partners.map((p) => (
-          <div key={p.name} aria-label={p.name} className="flex items-center">
-            {p.mark}
+    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto flex max-w-3xl flex-col items-start text-left lg:items-center lg:text-center">
+          <h2 className="max-w-md font-serif text-3xl font-semibold leading-[1.1] text-ink sm:text-4xl">
+            Norges smarteste tilbudstjeneste
+          </h2>
+          <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">
+            Kobly flytter ikke selv — vi samler byråene som gjør det best, og
+            kobler deg med tre som passer akkurat din flytting.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              href="/wizard"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90"
+            >
+              Få tilbud gratis
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="#"
+              className="inline-flex items-center rounded-full px-5 py-3 text-sm font-medium text-ink ring-1 ring-line transition-colors hover:bg-ink/5"
+            >
+              Møt byråene
+            </a>
           </div>
-        ))}
+        </div>
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:mt-16 sm:gap-x-14">
+          {partners.map((p) => (
+            <div key={p.name} aria-label={p.name} className="flex items-center">
+              {p.mark}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

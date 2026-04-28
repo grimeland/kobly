@@ -18,17 +18,24 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 transition-colors",
+        "sticky top-0 z-40 px-6 transition-colors sm:px-10",
         scrolled ? "bg-bg/85 backdrop-blur-md" : "bg-transparent",
       )}
     >
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-10">
+      <div className="mx-auto flex max-w-6xl items-center justify-between py-4">
         <Link href="/" aria-label="Kobly hjem" className="no-underline">
           <Logo />
         </Link>
+        <button
+          type="button"
+          aria-label="Meny"
+          className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5 lg:hidden"
+        >
+          Meny
+        </button>
         <Link
           href="/wizard"
-          className="inline-flex items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90"
+          className="hidden items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90 lg:inline-flex"
         >
           Få tilbud gratis
         </Link>

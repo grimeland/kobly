@@ -40,56 +40,59 @@ export function PostnummerInput({
   return (
     <form
       onSubmit={onSubmit}
-      className={cn(
-        "flex w-full max-w-md flex-col gap-2",
-        layout === "inline" && "sm:flex-row sm:items-center",
-        className,
-      )}
+      className={cn("w-full max-w-md", className)}
       noValidate
     >
       <div
         className={cn(
-          "flex flex-1 items-center rounded-full px-5 py-3 transition-colors",
-          isOnDark
-            ? "bg-white/10 text-brand-ink ring-1 ring-white/15 focus-within:ring-white/30"
-            : "bg-surface text-ink ring-1 ring-line focus-within:ring-ink/20",
+          "flex gap-2",
+          layout === "inline" ? "flex-row items-center" : "flex-col",
         )}
       >
-        <input
-          type="text"
-          inputMode="numeric"
-          pattern="\d{4}"
-          maxLength={4}
-          value={value}
-          onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
-          onBlur={() => setTouched(true)}
-          placeholder={placeholder}
-          aria-label="Postnummer"
-          aria-invalid={showError || undefined}
+        <div
           className={cn(
-            "w-full bg-transparent text-base outline-none",
+            "flex flex-1 items-center rounded-full px-5 py-3 transition-colors",
             isOnDark
-              ? "placeholder:text-brand-ink/50"
-              : "placeholder:text-ink-muted/70",
+              ? "bg-white/10 text-brand-ink ring-1 ring-white/15 focus-within:ring-white/30"
+              : "bg-surface text-ink ring-1 ring-line focus-within:ring-ink/20",
           )}
-        />
+        >
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="\d{4}"
+            maxLength={4}
+            value={value}
+            onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
+            onBlur={() => setTouched(true)}
+            placeholder={placeholder}
+            aria-label="Postnummer"
+            aria-invalid={showError || undefined}
+            className={cn(
+              "w-full bg-transparent text-base outline-none",
+              isOnDark
+                ? "placeholder:text-brand-ink/50"
+                : "placeholder:text-ink-muted/70",
+            )}
+          />
+        </div>
+        <button
+          type="submit"
+          className={cn(
+            "group inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-sm font-medium transition-colors sm:px-6 sm:text-base",
+            isOnDark
+              ? "bg-brand-ink text-brand hover:bg-white"
+              : "bg-brand text-brand-ink hover:bg-brand/90",
+          )}
+        >
+          {cta}
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </button>
       </div>
-      <button
-        type="submit"
-        className={cn(
-          "group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-base font-medium transition-colors",
-          isOnDark
-            ? "bg-brand-ink text-brand hover:bg-white"
-            : "bg-brand text-brand-ink hover:bg-brand/90",
-        )}
-      >
-        {cta}
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </button>
       {showError ? (
         <p
           className={cn(
-            "mt-1 w-full text-sm sm:hidden",
+            "mt-2 text-sm",
             isOnDark ? "text-brand-ink/80" : "text-ink-muted",
           )}
           role="alert"

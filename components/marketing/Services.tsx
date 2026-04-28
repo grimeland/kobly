@@ -27,10 +27,10 @@ const services = [
 
 export function Services() {
   return (
-    <section className="px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
+    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          <h2 className="font-serif text-3xl font-semibold text-ink sm:text-4xl">
             Alt du trenger på ett sted
           </h2>
           <span

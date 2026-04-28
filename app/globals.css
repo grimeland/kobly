@@ -6,8 +6,9 @@
 
 @theme inline {
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-crimson), ui-serif, Georgia, serif;
   --font-display: var(--font-syne), var(--font-dm-sans), sans-serif;
-  --font-heading: var(--font-dm-sans), sans-serif;
+  --font-heading: var(--font-crimson), ui-serif, Georgia, serif;
 
   /* Brand surfaces */
   --color-bg: var(--bg);
@@ -83,6 +84,10 @@
   --input: var(--line);
   --ring: var(--brand);
   --radius: 1rem;
+
+  /* Override Tailwind defaults for font-* utilities */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-crimson), ui-serif, Georgia, serif;
 }
 
 @layer base {
