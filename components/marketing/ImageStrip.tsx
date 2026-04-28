@@ -3,13 +3,13 @@ import Image from "next/image";
 const tiles = [
   {
     title: "Flytting",
-    src: "/images/boxes-and-plants.jpg",
-    alt: "Flytteesker og planter klare for flytting",
+    src: "/images/R1-09476-0023-kopi.jpg",
+    alt: "Stue under flytting, sofa og pult med ting",
   },
   {
     title: "Lagring",
-    src: "/images/storage.jpg",
-    alt: "Lager med hyller og esker",
+    src: "/images/R1-07829-0034.jpg",
+    alt: "Bygate med trær, transitt-stemning",
   },
   {
     title: "Vask",
