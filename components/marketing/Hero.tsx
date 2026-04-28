@@ -45,40 +45,32 @@ function HeroIcons() {
 export function Hero() {
   return (
     <section className="px-6 pt-8 pb-12 sm:px-10 sm:pt-12 sm:pb-16 lg:pt-24 lg:pb-32">
-      <div className="mx-auto max-w-6xl">
-        {/* Mobil: sentrert, ingen kort */}
-        <div className="flex flex-col items-center text-center lg:hidden">
-          <h1 className="text-balance font-serif text-[2.25rem] font-semibold leading-[1.05] text-ink sm:text-[2.75rem]">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <p className="hidden font-display text-sm font-medium tracking-[0.08em] text-ink-muted lg:block">
+            Norges smarteste tilbudstjeneste
+          </p>
+          <h1 className="text-balance font-serif text-[2.25rem] font-semibold leading-[1.05] text-ink sm:text-[2.75rem] lg:mt-3 lg:text-[3.75rem] lg:leading-[1.02] xl:text-[5rem]">
             Vi finner det beste flyttebyrået for deg
           </h1>
-          <p className="mt-4 max-w-md text-pretty text-base text-ink-muted">
+          <p className="mt-4 max-w-md text-pretty text-base text-ink-muted lg:hidden">
             Kobly kobler deg med kvalitetssjekkede byråer i ditt område
           </p>
-          <PostnummerInput className="mt-7 mx-auto" />
+          <div className="mt-7 lg:hidden">
+            <PostnummerInput />
+          </div>
         </div>
-
-        {/* Desktop: split layout med kort */}
-        <div className="hidden items-center gap-16 lg:grid lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <p className="font-display text-sm font-medium tracking-[0.08em] text-ink-muted">
-              Norges smarteste tilbudstjeneste
-            </p>
-            <h1 className="mt-3 text-balance font-serif text-[3.75rem] font-semibold leading-[1.02] text-ink xl:text-[5rem]">
-              Vi finner det beste flyttebyrået for deg
-            </h1>
-          </div>
-          <div className="rounded-3xl bg-surface p-6 ring-1 ring-line lg:p-7">
-            <HeroIcons />
-            <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-              Skriv inn postnummeret ditt så kobler vi deg med tre
-              håndplukkede, kvalitetssjekkede byråer i ditt område.
-            </p>
-            <PostnummerInput
-              className="mt-5 max-w-none"
-              layout="stack"
-              cta="Finn tilbud"
-            />
-          </div>
+        <div className="hidden rounded-3xl bg-surface p-6 ring-1 ring-line lg:block lg:p-7">
+          <HeroIcons />
+          <p className="mt-5 text-sm leading-relaxed text-ink-muted">
+            Skriv inn postnummeret ditt så kobler vi deg med tre håndplukkede,
+            kvalitetssjekkede byråer i ditt område.
+          </p>
+          <PostnummerInput
+            className="mt-5 max-w-none"
+            layout="stack"
+            cta="Finn tilbud"
+          />
         </div>
       </div>
     </section>
