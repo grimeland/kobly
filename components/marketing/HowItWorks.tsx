@@ -117,7 +117,7 @@ export function HowItWorks() {
                 <StepBadge n={step.n} />
                 <span className="flex-shrink-0">{step.art}</span>
               </div>
-              <h3 className="mt-8 text-xl font-semibold tracking-tight text-ink">
+              <h3 className="mt-8 font-serif text-2xl font-semibold text-ink">
                 {step.title}
               </h3>
               <p className="mt-2 text-sm text-ink-muted sm:text-base">

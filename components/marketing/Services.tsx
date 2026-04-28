@@ -44,7 +44,7 @@ export function Services() {
               key={s.title}
               className="rounded-2xl bg-surface p-6 ring-1 ring-line transition-colors hover:bg-surface/80 sm:p-7"
             >
-              <h3 className="text-xl font-semibold tracking-tight text-ink">
+              <h3 className="font-serif text-2xl font-semibold text-ink">
                 {s.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-base">

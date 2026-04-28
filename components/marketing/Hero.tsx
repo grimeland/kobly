@@ -67,14 +67,14 @@ export function Hero() {
               Vi finner det beste flyttebyrået for deg
             </h1>
           </div>
-          <div className="rounded-3xl bg-surface p-7 ring-1 ring-line">
+          <div className="rounded-3xl bg-surface p-6 ring-1 ring-line lg:p-7">
             <HeroIcons />
-            <p className="mt-5 text-base text-ink-muted">
-              Skriv inn postnummeret ditt så kobler vi deg med tre håndplukkede,
-              kvalitetssjekkede byråer i ditt område.
+            <p className="mt-5 text-sm leading-relaxed text-ink-muted">
+              Skriv inn postnummeret ditt så kobler vi deg med tre
+              håndplukkede, kvalitetssjekkede byråer i ditt område.
             </p>
             <PostnummerInput
-              className="mt-5"
+              className="mt-5 max-w-none"
               layout="stack"
               cta="Finn tilbud"
             />

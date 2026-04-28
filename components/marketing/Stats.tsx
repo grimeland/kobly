@@ -15,10 +15,10 @@ export function Stats() {
               key={s.label}
               className="flex flex-col rounded-2xl bg-surface px-5 py-5 ring-1 ring-line sm:px-6 sm:py-6"
             >
-              <p className="text-3xl font-bold leading-none tracking-tight text-ink sm:text-4xl">
+              <p className="text-4xl font-bold leading-none tracking-tight text-ink sm:text-5xl">
                 {s.value}
               </p>
-              <p className="mt-3 text-sm text-ink-muted">{s.label}</p>
+              <p className="mt-4 text-sm text-ink-muted">{s.label}</p>
             </div>
           ))}
         </div>
