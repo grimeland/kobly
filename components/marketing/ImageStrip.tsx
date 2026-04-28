@@ -27,7 +27,7 @@ export function ImageStrip() {
           {tiles.map((tile, i) => (
             <div
               key={tile.src}
-              className="relative aspect-[4/5] w-[68%] shrink-0 snap-start overflow-hidden rounded-2xl md:w-auto"
+              className="relative aspect-[4/5] w-[70%] shrink-0 snap-start overflow-hidden rounded-2xl md:w-auto md:aspect-square"
             >
               <Image
                 src={tile.src}
