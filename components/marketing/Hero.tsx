@@ -63,7 +63,7 @@ export function Hero() {
             <p className="font-display text-sm font-medium tracking-[0.08em] text-ink-muted">
               Norges smarteste tilbudstjeneste
             </p>
-            <h1 className="mt-3 text-balance font-serif text-[3.5rem] font-semibold leading-[1.02] text-ink xl:text-[4.25rem]">
+            <h1 className="mt-3 text-balance font-serif text-[3.75rem] font-semibold leading-[1.02] text-ink xl:text-[5rem]">
               Vi finner det beste flyttebyrået for deg
             </h1>
           </div>
