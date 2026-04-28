@@ -54,11 +54,11 @@ export function Trust() {
   return (
     <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
       <div className="mx-auto max-w-6xl">
-        <div className="mx-auto flex max-w-3xl flex-col items-start text-left lg:items-center lg:text-center">
-          <h2 className="max-w-md font-serif text-3xl font-semibold leading-[1.1] text-ink sm:text-4xl">
+        <div className="mx-auto flex max-w-3xl flex-col text-left lg:items-center lg:text-center">
+          <h2 className="font-serif text-3xl font-semibold leading-[1.1] text-balance text-ink sm:text-4xl lg:max-w-md">
             Norges smarteste tilbudstjeneste
           </h2>
-          <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">
+          <p className="mt-4 text-base text-ink-muted sm:text-lg lg:max-w-xl">
             Kobly flytter ikke selv — vi samler byråene som gjør det best, og
             kobler deg med tre som passer akkurat din flytting.
           </p>
