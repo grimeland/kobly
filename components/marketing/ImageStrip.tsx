@@ -2,20 +2,19 @@ import Image from "next/image";
 
 const tiles = [
   {
+    title: "Flytting",
     src: "/images/boxes-and-plants.jpg",
-    alt: "Lagerlokale med flytteesker og planter",
+    alt: "Flytteesker og planter klare for flytting",
   },
   {
-    src: "/images/building-exterior.jpg",
-    alt: "Moderne boligbygg",
+    title: "Lagring",
+    src: "/images/storage.jpg",
+    alt: "Lager med hyller og esker",
   },
   {
-    src: "/images/moving-couple.jpg",
-    alt: "Par som bærer flyttesker",
-  },
-  {
-    src: "/images/modern-house.jpg",
-    alt: "Moderne enebolig",
+    title: "Vask",
+    src: "/images/cleaning.jpg",
+    alt: "Vask og rengjøring",
   },
 ];
 
@@ -23,21 +22,26 @@ export function ImageStrip() {
   return (
     <section className="px-6 pb-20 sm:px-10 sm:pb-28 lg:pb-32">
       <div className="mx-auto max-w-6xl">
-        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
+        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
           {tiles.map((tile, i) => (
-            <div
+            <article
               key={tile.src}
-              className="relative aspect-[4/5] w-[70%] shrink-0 snap-start overflow-hidden rounded-2xl md:w-auto md:aspect-square"
+              className="flex w-[78%] shrink-0 snap-start flex-col gap-3 md:w-auto"
             >
-              <Image
-                src={tile.src}
-                alt={tile.alt}
-                fill
-                sizes="(min-width: 768px) 25vw, 68vw"
-                className="object-cover"
-                priority={i === 0}
-              />
-            </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
+                <Image
+                  src={tile.src}
+                  alt={tile.alt}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 78vw"
+                  className="object-cover"
+                  priority={i === 0}
+                />
+              </div>
+              <h3 className="font-serif text-2xl font-semibold text-ink">
+                {tile.title}
+              </h3>
+            </article>
           ))}
         </div>
       </div>

@@ -54,7 +54,7 @@ export function Hero() {
           <p className="hidden font-display text-sm font-medium tracking-[0.08em] text-ink-muted lg:block">
             Norges smarteste tilbudstjeneste
           </p>
-          <h1 className="text-balance font-serif text-[2.25rem] font-semibold leading-[1.05] text-ink sm:text-[2.75rem] lg:mt-3 lg:text-[3.75rem] lg:leading-[1.02] xl:text-[5rem]">
+          <h1 className="text-balance font-serif text-[2.25rem] font-semibold leading-[1.05] text-ink sm:text-[2.75rem] lg:mt-3 lg:text-[3.25rem] lg:leading-[1.05] xl:text-[4rem]">
             Vi finner det beste flyttebyrået for deg
           </h1>
           <p className="mt-4 max-w-md text-pretty text-base text-ink-muted lg:hidden">
