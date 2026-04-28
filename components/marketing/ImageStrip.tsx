@@ -23,7 +23,7 @@ export function ImageStrip() {
   return (
     <section className="px-6 pb-20 sm:px-10 sm:pb-28 lg:pb-32">
       <div className="mx-auto max-w-6xl">
-        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
+        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible">
           {tiles.map((tile, i) => (
             <div
               key={tile.src}

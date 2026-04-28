@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Variant = "light" | "onDark";
@@ -11,12 +11,14 @@ type Layout = "inline" | "stack";
 export function PostnummerInput({
   variant = "light",
   layout = "inline",
+  showIcon = false,
   className,
   placeholder = "Ditt postnummer",
   cta = "Få tilbud",
 }: {
   variant?: Variant;
   layout?: Layout;
+  showIcon?: boolean;
   className?: string;
   placeholder?: string;
   cta?: string;
@@ -51,13 +53,23 @@ export function PostnummerInput({
       >
         <div
           className={cn(
-            "flex items-center rounded-full px-5 py-3 transition-colors",
+            "flex items-center gap-3 rounded-full px-5 py-3 transition-colors",
             layout === "inline" ? "flex-1" : "w-full",
             isOnDark
               ? "bg-white/10 text-brand-ink ring-1 ring-white/15 focus-within:ring-white/30"
               : "bg-surface text-ink ring-1 ring-line focus-within:ring-ink/20",
           )}
         >
+          {showIcon ? (
+            <Search
+              className={cn(
+                "h-5 w-5 shrink-0",
+                isOnDark ? "text-brand-ink/60" : "text-ink-muted",
+              )}
+              strokeWidth={1.6}
+              aria-hidden
+            />
+          ) : null}
           <input
             type="text"
             inputMode="numeric"

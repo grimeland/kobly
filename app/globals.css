@@ -13,6 +13,7 @@
   /* Brand surfaces */
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-line: var(--line);
@@ -54,12 +55,13 @@
   /* Kobly brand tokens */
   --bg: #f4f1ea;
   --surface: #ffffff;
+  --surface-soft: #faf9f6;
   --ink: #1a1a1a;
   --ink-muted: #5c5c5c;
   --line: #e6e1d6;
 
-  --brand: #1f3a2e;
-  --brand-ink: #f4f1ea;
+  --brand: #221814;
+  --brand-ink: #faf9f6;
   --accent-lime: #d6e8a8;
   --accent-amber: #e8a87c;
   --move: #2f5fa8;
@@ -83,7 +85,7 @@
   --border: var(--line);
   --input: var(--line);
   --ring: var(--brand);
-  --radius: 1rem;
+  --radius: 0.625rem;
 
   /* Override Tailwind defaults for font-* utilities */
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
@@ -104,5 +106,13 @@
   ::selection {
     background: var(--brand);
     color: var(--brand-ink);
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

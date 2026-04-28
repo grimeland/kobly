@@ -1,43 +1,47 @@
 import { PostnummerInput } from "./PostnummerInput";
 
+function KoblyMark({ className }: { className?: string }) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 27 27"
+      fill="none"
+      aria-hidden
+      className={className}
+    >
+      <circle cx="13.5" cy="13.5" r="11.625" stroke="currentColor" strokeWidth="3.75" />
+      <path
+        d="M16.5 1.875C12.7075 5.23556 10.5 9.26144 10.5 13.5887C10.5 17.8401 12.6307 21.8006 16.3019 25.125"
+        stroke="currentColor"
+        strokeWidth="3.75"
+      />
+    </svg>
+  );
+}
+
 function HeroIcons() {
   return (
-    <div className="flex items-center gap-2">
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden>
-        <rect width="41.4" height="41.4" rx="7" fill="#D9EFA7" />
-        <path
-          d="M20.6 33.27V20.74M20.6 20.74 9.69 14.48M20.6 20.74l10.91-6.26M14.96 11.06l11.27 6.45M19.35 32.93c.38.22.81.34 1.25.34s.87-.12 1.25-.34l8.77-5.01c.38-.22.7-.54.92-.92.22-.38.34-.81.34-1.25V15.73c0-.44-.12-.87-.34-1.25-.22-.38-.54-.7-.92-.92l-8.77-5.01c-.38-.22-.81-.34-1.25-.34s-.87.12-1.25.34l-8.77 5.01c-.38.22-.7.54-.92.92-.22.38-.34.81-.34 1.25v10.02c0 .44.12.87.34 1.25.22.38.54.7.92.92l8.77 5.01Z"
-          stroke="#3D5507"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden>
-        <rect width="41.4" height="41.4" rx="7" fill="#FFFFFF" />
-        <g transform="translate(8 7)">
+    <div className="flex items-center justify-center gap-2.5">
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-brand text-brand-ink">
+        <KoblyMark className="h-5 w-5" />
+      </span>
+      <span className="flex items-center gap-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-ink/25" />
+        <span className="h-1.5 w-1.5 rounded-full bg-ink/25" />
+        <span className="h-1.5 w-1.5 rounded-full bg-ink/25" />
+      </span>
+      <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent-lime">
+        <svg width="28" height="28" viewBox="0 0 42 42" fill="none" aria-hidden>
           <path
-            d="M19 1.5H7.6c-.7 0-1.4.3-1.9.8a2.7 2.7 0 0 0-.8 1.9V25c0 .7.3 1.4.8 1.9.5.5 1.2.8 1.9.8h16.4c.7 0 1.4-.3 1.9-.8.5-.5.8-1.2.8-1.9V9.5M19 1.5c.4 0 .8.1 1.2.2.4.2.8.4 1.1.7l4.9 5c.3.3.5.7.7 1.1.2.4.2.8.2 1.2M19 1.5v6.9c0 .4.1.7.4 1 .3.3.6.4 1 .4h6.7"
-            stroke="#1A1A1A"
-            strokeWidth="2"
+            d="M20.6 33.27V20.74M20.6 20.74 9.69 14.48M20.6 20.74l10.91-6.26M14.96 11.06l11.27 6.45M19.35 32.93c.38.22.81.34 1.25.34s.87-.12 1.25-.34l8.77-5.01c.38-.22.7-.54.92-.92.22-.38.34-.81.34-1.25V15.73c0-.44-.12-.87-.34-1.25-.22-.38-.54-.7-.92-.92l-8.77-5.01c-.38-.22-.81-.34-1.25-.34s-.87.12-1.25.34l-8.77 5.01c-.38.22-.7.54-.92.92-.22.38-.34.81-.34 1.25v10.02c0 .44.12.87.34 1.25.22.38.54.7.92.92l8.77 5.01Z"
+            stroke="#3D5507"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            fill="none"
           />
-        </g>
-      </svg>
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden>
-        <rect width="41.4" height="41.4" rx="7" fill="#D9EFA7" />
-        <circle cx="15.5" cy="17.5" r="2" fill="#3D5507" />
-        <circle cx="26.5" cy="17.5" r="2" fill="#3D5507" />
-        <path
-          d="M14 25c1.6 2.4 4.1 4 7 4s5.4-1.6 7-4"
-          stroke="#3D5507"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
+        </svg>
+      </span>
     </div>
   );
 }
@@ -57,18 +61,19 @@ export function Hero() {
             Kobly kobler deg med kvalitetssjekkede byråer i ditt område
           </p>
           <div className="mt-7 lg:hidden">
-            <PostnummerInput />
+            <PostnummerInput showIcon />
           </div>
         </div>
-        <div className="hidden rounded-3xl bg-surface p-6 ring-1 ring-line lg:block lg:p-7">
+        <div className="hidden rounded-2xl bg-surface-soft p-8 lg:block lg:p-10">
           <HeroIcons />
-          <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-            Skriv inn postnummeret ditt så kobler vi deg med tre håndplukkede,
+          <p className="mt-10 text-center text-lg leading-relaxed text-ink">
+            Skriv inn postnummeret ditt så kobler vi deg med 3 håndplukkede,
             kvalitetssjekkede byråer i ditt område.
           </p>
           <PostnummerInput
-            className="mt-5 max-w-none"
+            className="mt-10 max-w-none"
             layout="stack"
+            showIcon
             cta="Finn tilbud"
           />
         </div>
