@@ -23,7 +23,7 @@ export function CityHero({ city }: { city: City }) {
               href={`/wizard?by=${city.slug}`}
               className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3.5 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90 sm:text-base"
             >
-              Få tilbud gratis
+              Få 3 tilbud gratis
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link

@@ -51,7 +51,7 @@ export function HeroCard({
   title = "La firmaene konkurrere om deg",
   body = "Vi kobler deg med 3 håndplukkede, kvalitetssjekkede byråer i ditt område.",
   href = "/wizard",
-  cta = "Få gratis tilbud",
+  cta = "Få 3 tilbud gratis",
 }: {
   title?: string;
   body?: string;

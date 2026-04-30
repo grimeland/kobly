@@ -44,7 +44,7 @@ export function Header() {
             href="/wizard"
             className="inline-flex items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90"
           >
-            Få tilbud gratis
+            Få 3 tilbud gratis
           </Link>
         </nav>
       </div>

@@ -14,7 +14,7 @@ export function PostnummerInput({
   showIcon = false,
   className,
   placeholder = "Ditt postnummer",
-  cta = "Få tilbud",
+  cta = "Få 3 tilbud gratis",
 }: {
   variant?: Variant;
   layout?: Layout;

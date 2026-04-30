@@ -28,7 +28,7 @@ export function Footer() {
               href="/wizard"
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-ink px-5 py-3 text-sm font-medium text-ink transition-colors hover:bg-brand-ink/90"
             >
-              Få tilbud gratis
+              Få 3 tilbud gratis
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

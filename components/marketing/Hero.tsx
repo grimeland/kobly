@@ -20,7 +20,7 @@ export function Hero() {
             href="/wizard"
             className="mt-7 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-medium text-brand-ink transition-colors hover:bg-brand/90 lg:hidden"
           >
-            Få tilbud
+            Få 3 tilbud gratis
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
