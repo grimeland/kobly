@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -75,6 +75,14 @@ type WizardData = {
 const TOTAL_STEPS = 5;
 
 export default function WizardPage() {
+  return (
+    <Suspense fallback={null}>
+      <WizardPageInner />
+    </Suspense>
+  );
+}
+
+function WizardPageInner() {
   const params = useSearchParams();
   const fraFraUrl = params.get("fra") ?? "";
   const byFraUrl = params.get("by") as CityKey | null;
