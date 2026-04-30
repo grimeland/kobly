@@ -1,4 +1,5 @@
-import { PostnummerInput } from "./PostnummerInput";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { HeroCard } from "./HeroCard";
 
 export function Hero() {
@@ -15,9 +16,13 @@ export function Hero() {
           <p className="mt-4 max-w-md text-pretty text-base text-ink-muted lg:hidden">
             Kobly kobler deg med kvalitetssjekkede byråer i ditt område
           </p>
-          <div className="mt-7 lg:hidden">
-            <PostnummerInput showIcon />
-          </div>
+          <Link
+            href="/wizard"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-4 text-base font-medium text-brand-ink transition-colors hover:bg-brand/90 lg:hidden"
+          >
+            Få tilbud
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
         <div className="hidden lg:block">
           <HeroCard />
