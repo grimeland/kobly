@@ -1,48 +1,44 @@
 import Image from "next/image";
+import { Stats } from "./Stats";
 
-const tiles = [
-  {
-    title: "Flytting",
-    src: "/images/R1-09476-0023-kopi.jpg",
-    alt: "Stue under flytting, sofa og pult med ting",
-  },
-  {
-    title: "Lagring",
-    src: "/images/R1-07829-0034.jpg",
-    alt: "Bygate med trær, transitt-stemning",
-  },
-  {
-    title: "Vask",
-    src: "/images/cleaning.jpg",
-    alt: "Vask og rengjøring",
-  },
+const baseTiles = [
+  "/images/travis-fish-2qZZu8lWDZo-unsplash.jpg",
+  "/images/dina-badamshina-j7vbBmTHmjY-unsplash.jpg",
+  "/images/lawrence-krowdeed-2vTqgr6sXsI-unsplash.jpg",
+  "/images/R1-09131-0032.JPG",
+  "/images/foto__2.jpg",
 ];
+
+// Duplisér nok ganger til at "halve" tracken er bredere enn viewport,
+// slik at translateX(-50%) gir et sømløst loop.
+const tiles = Array.from({ length: 4 }, () => baseTiles).flat();
 
 export function ImageStrip() {
   return (
-    <section className="px-6 pb-20 sm:px-10 sm:pb-28 lg:pb-32">
-      <div className="mx-auto max-w-6xl">
-        <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
-          {tiles.map((tile, i) => (
-            <article
-              key={tile.src}
-              className="flex w-[78%] shrink-0 snap-start flex-col gap-3 md:w-auto"
+    <section className="relative pb-20 sm:pb-28 lg:pb-32">
+      <div className="marquee-mask overflow-hidden">
+        <div className="marquee-track flex gap-4 sm:gap-5">
+          {tiles.map((src, i) => (
+            <div
+              key={i}
+              className="relative aspect-[4/5] h-[340px] shrink-0 overflow-hidden rounded-[14px] sm:h-[440px] lg:h-[540px]"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                <Image
-                  src={tile.src}
-                  alt={tile.alt}
-                  fill
-                  sizes="(min-width: 768px) 33vw, 78vw"
-                  className="object-cover"
-                  priority={i === 0}
-                />
-              </div>
-              <h3 className="font-serif text-2xl font-semibold text-ink">
-                {tile.title}
-              </h3>
-            </article>
+              <Image
+                src={src}
+                alt=""
+                aria-hidden
+                fill
+                sizes="(min-width: 1024px) 430px, (min-width: 640px) 350px, 270px"
+                className="object-cover"
+                priority={i < 3}
+              />
+            </div>
           ))}
+        </div>
+      </div>
+      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-6 pb-20 sm:px-10 sm:pb-28 lg:pb-32">
+        <div className="pointer-events-auto mx-auto w-full max-w-3xl">
+          <Stats compact />
         </div>
       </div>
     </section>

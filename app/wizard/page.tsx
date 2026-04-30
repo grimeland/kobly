@@ -3,43 +3,82 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
-import { ArrowRight, Check } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowRight,
+  Check,
+  Info,
+  MapPin,
+  Send,
+  Upload,
+  X,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/marketing/Logo";
-import { Illustration } from "@/components/wizard/Illustration";
+import { CITIES, type CityKey } from "@/lib/cities";
+
+const WIZARD_IMAGES: Record<number, string> = {
+  1: "/images/R1-09476-0023-kopi.jpg",
+  2: "/images/R1-07829-0034.jpg",
+  3: "/images/rull3_26.jpg",
+  4: "/images/R1-09476-0028.jpg",
+};
 
 type FlytteType = "privat" | "bedrift" | "internasjonal";
 type Boligtype = "leilighet" | "rekkehus" | "enebolig" | "annet";
 
+type Coord = { lat: number; lon: number };
+
+async function reverseGeocodeAddress(
+  c: Coord,
+  fallback = "Pin plassert i kart",
+): Promise<string> {
+  try {
+    const res = await fetch(
+      `https://ws.geonorge.no/adresser/v1/punktsok?radius=200&lat=${c.lat}&lon=${c.lon}&treffPerSide=1&side=0`,
+    );
+    if (!res.ok) return fallback;
+    const json = (await res.json()) as {
+      adresser?: {
+        adressetekst: string;
+        postnummer: string;
+        poststed: string;
+      }[];
+    };
+    const a = json.adresser?.[0];
+    return a
+      ? `${a.adressetekst}, ${a.postnummer} ${a.poststed}`
+      : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 type WizardData = {
   flytteType: FlytteType | "";
   fra: string;
+  fraCoord: Coord | null;
   til: string;
+  tilCoord: Coord | null;
   boligtype: Boligtype | "";
-  rooms: string;
   flyttedato: string;
   fleksibel: boolean;
-  tilleggstjenester: string[];
+  beskrivelse: string;
+  bilder: File[];
   navn: string;
   telefon: string;
   epost: string;
 };
 
-const TILLEGG = [
-  "Pakking",
-  "Møbelmontering",
-  "Vask av gammel bolig",
-  "Lagring",
-  "Kasting og rydding",
-  "Tunge ting (piano, safe, etc.)",
-];
-
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 export default function WizardPage() {
   const params = useSearchParams();
   const fraFraUrl = params.get("fra") ?? "";
+  const byFraUrl = params.get("by") as CityKey | null;
+  const initialCenter = byFraUrl && CITIES[byFraUrl] ? CITIES[byFraUrl] : null;
 
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -47,12 +86,14 @@ export default function WizardPage() {
   const [data, setData] = useState<WizardData>({
     flytteType: "",
     fra: fraFraUrl,
+    fraCoord: null,
     til: "",
+    tilCoord: null,
     boligtype: "",
-    rooms: "",
     flyttedato: "",
     fleksibel: false,
-    tilleggstjenester: [],
+    beskrivelse: "",
+    bilder: [],
     navn: "",
     telefon: "",
     epost: "",
@@ -61,27 +102,17 @@ export default function WizardPage() {
   const update = <K extends keyof WizardData>(key: K, value: WizardData[K]) =>
     setData((d) => ({ ...d, [key]: value }));
 
-  const toggleTillegg = (label: string) =>
-    setData((d) => ({
-      ...d,
-      tilleggstjenester: d.tilleggstjenester.includes(label)
-        ? d.tilleggstjenester.filter((t) => t !== label)
-        : [...d.tilleggstjenester, label],
-    }));
-
   const valid = useMemo(() => {
     switch (step) {
       case 1:
-        return Boolean(data.flytteType);
+        return data.fra.trim().length > 2 && data.til.trim().length > 2;
       case 2:
-        return /^\d{4}$/.test(data.fra) && /^\d{4}$/.test(data.til);
+        return Boolean(data.flytteType) && Boolean(data.boligtype);
       case 3:
-        return Boolean(data.boligtype) && data.rooms !== "";
-      case 4:
         return data.fleksibel || Boolean(data.flyttedato);
-      case 5:
+      case 4:
         return true;
-      case 6:
+      case 5:
         return (
           data.navn.trim().length > 1 &&
           /^[\d\s+]{8,}$/.test(data.telefon) &&
@@ -137,7 +168,7 @@ export default function WizardPage() {
       {/* Kort */}
       <div
         className={cn(
-          "relative z-10 m-4 flex w-full max-w-[1060px] flex-col rounded-2xl bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.14),0_4px_16px_rgba(0,0,0,0.06)]",
+          "relative z-10 m-4 flex w-full max-w-[1060px] flex-col rounded-[14px] bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.14),0_4px_16px_rgba(0,0,0,0.06)]",
           "min-h-[640px] sm:m-6",
         )}
       >
@@ -165,48 +196,50 @@ export default function WizardPage() {
                 direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
               )}
             >
-              <span className="font-display text-[11px] tracking-[0.15em] text-ink/35 uppercase">
+              <span className="text-sm text-ink/45">
                 Steg {step} av {TOTAL_STEPS}
               </span>
 
               {step === 1 && (
-                <Step1
-                  value={data.flytteType}
-                  onChange={(v) => update("flytteType", v)}
+                <StepAdresse
+                  fra={data.fra}
+                  til={data.til}
+                  onFra={(v, coord) => {
+                    update("fra", v);
+                    if (coord !== undefined) update("fraCoord", coord);
+                  }}
+                  onTil={(v, coord) => {
+                    update("til", v);
+                    if (coord !== undefined) update("tilCoord", coord);
+                  }}
                 />
               )}
               {step === 2 && (
-                <Step2
-                  fra={data.fra}
-                  til={data.til}
-                  onFra={(v) => update("fra", v)}
-                  onTil={(v) => update("til", v)}
+                <StepType
+                  flytteType={data.flytteType}
+                  boligtype={data.boligtype}
+                  onFlytteType={(v) => update("flytteType", v)}
+                  onBoligtype={(v) => update("boligtype", v)}
                 />
               )}
               {step === 3 && (
-                <Step3
-                  boligtype={data.boligtype}
-                  rooms={data.rooms}
-                  onBoligtype={(v) => update("boligtype", v)}
-                  onRooms={(v) => update("rooms", v)}
-                />
-              )}
-              {step === 4 && (
-                <Step4
+                <StepDato
                   date={data.flyttedato}
                   fleksibel={data.fleksibel}
                   onDate={(v) => update("flyttedato", v)}
                   onFleksibel={(v) => update("fleksibel", v)}
                 />
               )}
-              {step === 5 && (
-                <Step5
-                  selected={data.tilleggstjenester}
-                  onToggle={toggleTillegg}
+              {step === 4 && (
+                <StepGods
+                  beskrivelse={data.beskrivelse}
+                  bilder={data.bilder}
+                  onBeskrivelse={(v) => update("beskrivelse", v)}
+                  onBilderChange={(v) => update("bilder", v)}
                 />
               )}
-              {step === 6 && (
-                <Step6
+              {step === 5 && (
+                <StepKontakt
                   navn={data.navn}
                   telefon={data.telefon}
                   epost={data.epost}
@@ -247,20 +280,409 @@ export default function WizardPage() {
             </div>
           </div>
 
-          {/* Høyre kolonne — illustrasjon */}
+          {/* Høyre kolonne — bilde eller kvittering */}
           <div className="hidden p-4 pl-0 lg:flex lg:flex-1">
             <div
               key={`art-${step}`}
-              className="wizard-fade-in relative flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-bg"
+              className="wizard-fade-in relative flex-1 overflow-hidden rounded-[14px] bg-bg"
             >
-              <div className="aspect-square w-full max-w-md p-10">
-                <Illustration step={step as 1 | 2 | 3 | 4 | 5 | 6} />
-              </div>
+              {step === 1 ? (
+                <MapPanel
+                  from={data.fraCoord}
+                  to={data.tilCoord}
+                  fromLabel={data.fra}
+                  toLabel={data.til}
+                  initialCenter={initialCenter}
+                  onPlaceFrom={(c, addr) => {
+                    update("fraCoord", c);
+                    update("fra", addr);
+                  }}
+                  onPlaceTo={(c, addr) => {
+                    update("tilCoord", c);
+                    update("til", addr);
+                  }}
+                />
+              ) : step === TOTAL_STEPS ? (
+                <Summary data={data} />
+              ) : (
+                <Image
+                  src={WIZARD_IMAGES[step]}
+                  alt=""
+                  aria-hidden
+                  fill
+                  sizes="(min-width: 1024px) 40vw, 0px"
+                  className="object-cover"
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function MapPanel({
+  from,
+  to,
+  fromLabel,
+  toLabel,
+  initialCenter,
+  onPlaceFrom,
+  onPlaceTo,
+}: {
+  from: Coord | null;
+  to: Coord | null;
+  fromLabel?: string;
+  toLabel?: string;
+  initialCenter?: { lat: number; lon: number; zoom: number } | null;
+  onPlaceFrom: (c: Coord, address: string) => void;
+  onPlaceTo: (c: Coord, address: string) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<import("leaflet").Map | null>(null);
+  const fromMarkerRef = useRef<import("leaflet").Marker | null>(null);
+  const toMarkerRef = useRef<import("leaflet").Marker | null>(null);
+  const fromCircleRef = useRef<import("leaflet").Circle | null>(null);
+  const lineRef = useRef<import("leaflet").Polyline | null>(null);
+  const midpointMarkerRef = useRef<import("leaflet").Marker | null>(null);
+  const [placing, setPlacing] = useState<"from" | "to" | null>(null);
+  const [locating, setLocating] = useState(false);
+
+  const useMyLocation = () => {
+    if (!navigator.geolocation || locating) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const c = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        const address = await reverseGeocodeAddress(c, "Min posisjon");
+        onPlaceFrom(c, address);
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 8000 },
+    );
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    let observer: ResizeObserver | null = null;
+
+    const initMap = async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !containerRef.current || mapRef.current) return;
+      const map = L.map(containerRef.current, {
+        center: initialCenter
+          ? [initialCenter.lat, initialCenter.lon]
+          : [60.5, 10.0],
+        zoom: initialCenter ? initialCenter.zoom : 5,
+        zoomControl: false,
+        attributionControl: false,
+      });
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        { maxZoom: 19 },
+      ).addTo(map);
+      mapRef.current = map;
+      map.invalidateSize();
+    };
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) {
+        if (!mapRef.current) {
+          void initMap();
+        } else {
+          mapRef.current.invalidateSize();
+        }
+      }
+    });
+    observer.observe(el);
+
+    if (el.clientWidth > 0 && el.clientHeight > 0) {
+      void initMap();
+    }
+
+    return () => {
+      cancelled = true;
+      observer?.disconnect();
+      mapRef.current?.remove();
+      mapRef.current = null;
+      fromMarkerRef.current = null;
+      toMarkerRef.current = null;
+      fromCircleRef.current = null;
+      lineRef.current = null;
+      midpointMarkerRef.current = null;
+    };
+  }, []);
+
+  // Map click handler for placing mode
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !placing) return;
+    const handler = async (e: { latlng: { lat: number; lng: number } }) => {
+      const c = { lat: e.latlng.lat, lon: e.latlng.lng };
+      const address = await reverseGeocodeAddress(c);
+      if (placing === "from") onPlaceFrom(c, address);
+      else onPlaceTo(c, address);
+      setPlacing(null);
+    };
+    map.on("click", handler);
+    const container = containerRef.current?.querySelector<HTMLElement>(
+      ".leaflet-container",
+    );
+    container?.classList.add("placing-mode");
+    return () => {
+      map.off("click", handler);
+      container?.classList.remove("placing-mode");
+    };
+  }, [placing, onPlaceFrom, onPlaceTo]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const L = (await import("leaflet")).default;
+      const map = mapRef.current;
+      if (cancelled || !map) return;
+
+      const pinIcon = (color: string) =>
+        L.divIcon({
+          className: "",
+          html: `<div style="width:36px;height:36px;background:${color};border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+        });
+
+      const koblyMidpointIcon = L.divIcon({
+        className: "",
+        html: `<div style="width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);border:1.5px solid #E6E1D6"><svg width="16" height="16" viewBox="0 0 27 27" fill="none"><circle cx="13.5" cy="13.5" r="11.625" stroke="#221814" stroke-width="3.75"/><path d="M16.5 1.875C12.7075 5.23556 10.5 9.26144 10.5 13.5887C10.5 17.8401 12.6307 21.8006 16.3019 25.125" stroke="#221814" stroke-width="3.75"/></svg></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+
+      const updateOverlays = () => {
+        const fromM = fromMarkerRef.current;
+        const toM = toMarkerRef.current;
+        if (fromM && toM && lineRef.current) {
+          const fromLL = fromM.getLatLng();
+          const toLL = toM.getLatLng();
+          lineRef.current.setLatLngs([fromLL, toLL]);
+          if (midpointMarkerRef.current) {
+            midpointMarkerRef.current.setLatLng([
+              (fromLL.lat + toLL.lat) / 2,
+              (fromLL.lng + toLL.lng) / 2,
+            ]);
+          }
+        }
+        if (fromM && fromCircleRef.current) {
+          const ll = fromM.getLatLng();
+          fromCircleRef.current.setLatLng([ll.lat, ll.lng]);
+        }
+      };
+
+      const setPin = (
+        ref: React.MutableRefObject<import("leaflet").Marker | null>,
+        coord: Coord | null,
+        color: string,
+        onMove: (c: Coord, address: string) => void,
+      ) => {
+        if (coord) {
+          if (ref.current) {
+            ref.current.setLatLng([coord.lat, coord.lon]);
+          } else {
+            const marker = L.marker([coord.lat, coord.lon], {
+              icon: pinIcon(color),
+              draggable: true,
+              autoPan: true,
+            }).addTo(map);
+            marker.on("drag", updateOverlays);
+            marker.on("dragend", async () => {
+              const ll = marker.getLatLng();
+              const newCoord = { lat: ll.lat, lon: ll.lng };
+              const address = await reverseGeocodeAddress(newCoord);
+              onMove(newCoord, address);
+            });
+            ref.current = marker;
+          }
+        } else if (ref.current) {
+          ref.current.remove();
+          ref.current = null;
+        }
+      };
+
+      setPin(fromMarkerRef, from, "#221814", onPlaceFrom);
+      setPin(toMarkerRef, to, "#3D5507", onPlaceTo);
+
+      if (from) {
+        if (fromCircleRef.current) {
+          fromCircleRef.current.setLatLng([from.lat, from.lon]);
+        } else {
+          fromCircleRef.current = L.circle([from.lat, from.lon], {
+            radius: 250,
+            color: "#221814",
+            fillColor: "#221814",
+            fillOpacity: 0.08,
+            opacity: 0.25,
+            weight: 1,
+            interactive: false,
+          }).addTo(map);
+        }
+      } else if (fromCircleRef.current) {
+        fromCircleRef.current.remove();
+        fromCircleRef.current = null;
+      }
+
+      if (from && to) {
+        const latlngs: [number, number][] = [
+          [from.lat, from.lon],
+          [to.lat, to.lon],
+        ];
+        if (lineRef.current) {
+          lineRef.current.setLatLngs(latlngs);
+        } else {
+          lineRef.current = L.polyline(latlngs, {
+            color: "#221814",
+            weight: 2.5,
+            dashArray: "6 6",
+            opacity: 0.7,
+          }).addTo(map);
+        }
+        const midLatLng: [number, number] = [
+          (from.lat + to.lat) / 2,
+          (from.lon + to.lon) / 2,
+        ];
+        if (midpointMarkerRef.current) {
+          midpointMarkerRef.current.setLatLng(midLatLng);
+        } else {
+          midpointMarkerRef.current = L.marker(midLatLng, {
+            icon: koblyMidpointIcon,
+            interactive: false,
+            zIndexOffset: 500,
+          }).addTo(map);
+        }
+        map.fitBounds(latlngs, { padding: [40, 40], maxZoom: 13 });
+      } else {
+        if (lineRef.current) {
+          lineRef.current.remove();
+          lineRef.current = null;
+        }
+        if (midpointMarkerRef.current) {
+          midpointMarkerRef.current.remove();
+          midpointMarkerRef.current = null;
+        }
+        if (from && !to) map.setView([from.lat, from.lon], 13);
+        else if (to && !from) map.setView([to.lat, to.lon], 13);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [from, to]);
+
+  const shortLabel = (s?: string) => {
+    if (!s) return null;
+    const parts = s.split(",");
+    return parts[0]?.trim() || s;
+  };
+  const fromShort = shortLabel(fromLabel);
+  const toShort = shortLabel(toLabel);
+
+  return (
+    <>
+      <div ref={containerRef} className="absolute inset-0" />
+
+      {fromShort || toShort ? (
+        <div className="absolute top-3 left-3 z-[1000] inline-flex items-center gap-2 rounded-[10px] bg-white/95 px-3 py-2 text-xs text-ink shadow-[0_1px_4px_rgba(0,0,0,0.12)] backdrop-blur">
+          <span className="text-ink/45">Ca.</span>
+          <span className="max-w-[110px] truncate font-medium">
+            {fromShort ?? "—"}
+          </span>
+          <ArrowRight className="h-3 w-3 text-ink/30" />
+          <span className="max-w-[110px] truncate font-medium">
+            {toShort ?? "—"}
+          </span>
+        </div>
+      ) : null}
+
+      <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+        <button
+          type="button"
+          onClick={() => mapRef.current?.zoomIn()}
+          aria-label="Zoom inn"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-[8px] bg-white text-ink/70 shadow-[0_1px_4px_rgba(0,0,0,0.15)] transition-colors hover:bg-[#F7F6F3]"
+        >
+          <ZoomIn className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => mapRef.current?.zoomOut()}
+          aria-label="Zoom ut"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-[8px] bg-white text-ink/70 shadow-[0_1px_4px_rgba(0,0,0,0.15)] transition-colors hover:bg-[#F7F6F3]"
+        >
+          <ZoomOut className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="absolute bottom-3 left-3 z-[1000]">
+        <button
+          type="button"
+          onClick={useMyLocation}
+          disabled={locating}
+          aria-label="Bruk min plassering"
+          title="Bruk min plassering"
+          className={cn(
+            "inline-flex h-9 w-9 items-center justify-center rounded-[8px] bg-white text-ink/70 shadow-[0_1px_4px_rgba(0,0,0,0.15)] transition-colors hover:bg-[#F7F6F3]",
+            locating && "animate-pulse",
+          )}
+        >
+          <Send className="h-4 w-4" />
+        </button>
+      </div>
+
+      <div className="absolute bottom-3 left-1/2 z-[1000] flex -translate-x-1/2 gap-2">
+        <button
+          type="button"
+          onClick={() => setPlacing(placing === "from" ? null : "from")}
+          className={cn(
+            "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-white/70 px-4 py-2 text-xs font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)] backdrop-blur transition-colors",
+            placing === "from"
+              ? "bg-brand text-brand-ink"
+              : "bg-white/95 text-ink hover:bg-white",
+          )}
+        >
+          {placing === "from" ? "Klikk på kartet" : "Plasser fra"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setPlacing(placing === "to" ? null : "to")}
+          className={cn(
+            "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-white/70 px-4 py-2 text-xs font-medium shadow-[0_1px_4px_rgba(0,0,0,0.12)] backdrop-blur transition-colors",
+            placing === "to"
+              ? "bg-brand text-brand-ink"
+              : "bg-white/95 text-ink hover:bg-white",
+          )}
+        >
+          {placing === "to" ? "Klikk på kartet" : "Plasser til"}
+        </button>
+      </div>
+      <div className="group absolute right-3 bottom-3 z-[1000]">
+        <button
+          type="button"
+          aria-label="Kart-attribusjon"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/85 text-ink/60 backdrop-blur transition-colors hover:bg-white"
+        >
+          <Info className="h-3.5 w-3.5" />
+        </button>
+        <div className="pointer-events-none absolute right-0 bottom-full mb-2 hidden rounded-[6px] bg-white/95 px-2.5 py-1.5 text-[11px] whitespace-nowrap text-ink/70 shadow-md group-hover:block">
+          © Leaflet · © CARTO · © OpenStreetMap
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -297,7 +719,7 @@ function PillButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center justify-center rounded-lg border-[1.5px] px-4 py-4 text-sm transition-colors",
+        "inline-flex items-center justify-center rounded-[14px] border-[1.5px] px-4 py-4 text-sm transition-colors",
         selected
           ? "border-brand bg-brand text-brand-ink"
           : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
@@ -324,7 +746,7 @@ function BlockCard({
       type="button"
       onClick={onSelect}
       className={cn(
-        "flex w-full items-start gap-4 rounded-xl border-[1.5px] p-5 text-left transition-colors",
+        "flex w-full items-start gap-4 rounded-[14px] border-[1.5px] p-5 text-left transition-colors",
         selected
           ? "border-brand bg-[#EDE5D8]"
           : "border-transparent bg-[#F3EEE3] hover:bg-[#E8E0D0]",
@@ -348,41 +770,7 @@ function BlockCard({
   );
 }
 
-function Step1({
-  value,
-  onChange,
-}: {
-  value: WizardData["flytteType"];
-  onChange: (v: FlytteType) => void;
-}) {
-  return (
-    <>
-      <StepHeader title="Hva slags flytting er det?" />
-      <div className="mt-4 flex flex-col gap-2.5">
-        <BlockCard
-          selected={value === "privat"}
-          title="Privat flytting"
-          description="Leilighet, hus eller hybel"
-          onSelect={() => onChange("privat")}
-        />
-        <BlockCard
-          selected={value === "bedrift"}
-          title="Bedriftsflytting"
-          description="Kontor, lager eller næringslokaler"
-          onSelect={() => onChange("bedrift")}
-        />
-        <BlockCard
-          selected={value === "internasjonal"}
-          title="Internasjonal"
-          description="Til eller fra utlandet"
-          onSelect={() => onChange("internasjonal")}
-        />
-      </div>
-    </>
-  );
-}
-
-function Step2({
+function StepAdresse({
   fra,
   til,
   onFra,
@@ -390,115 +778,241 @@ function Step2({
 }: {
   fra: string;
   til: string;
-  onFra: (v: string) => void;
-  onTil: (v: string) => void;
+  onFra: (v: string, coord?: Coord | null) => void;
+  onTil: (v: string, coord?: Coord | null) => void;
 }) {
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const c = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        const address = await reverseGeocodeAddress(c, "Min posisjon");
+        onFra(address, c);
+      },
+      undefined,
+      { enableHighAccuracy: true, timeout: 8000 },
+    );
+  };
+
   return (
     <>
       <StepHeader
         title="Hvor skal du flytte?"
-        subtitle="Vi bruker postnummer for å koble deg med byråer i ditt område"
+        subtitle="Skriv inn fra-adresse og til-adresse"
       />
       <div className="mt-4 flex flex-col gap-3.5">
-        <PostnummerField label="Fra postnummer" value={fra} onChange={onFra} />
-        <PostnummerField label="Til postnummer" value={til} onChange={onTil} />
+        <AddressField
+          label="Fra adresse"
+          value={fra}
+          onChange={onFra}
+          placeholder="F.eks. Kongens gate 1, 0153 Oslo"
+          onUseMyLocation={handleUseMyLocation}
+        />
+        <AddressField
+          label="Til adresse"
+          value={til}
+          onChange={onTil}
+          placeholder="F.eks. Storgata 14, 0184 Oslo"
+        />
       </div>
     </>
   );
 }
 
-function PostnummerField({
+function StepType({
+  flytteType,
+  boligtype,
+  onFlytteType,
+  onBoligtype,
+}: {
+  flytteType: WizardData["flytteType"];
+  boligtype: WizardData["boligtype"];
+  onFlytteType: (v: FlytteType) => void;
+  onBoligtype: (v: Boligtype) => void;
+}) {
+  return (
+    <>
+      <StepHeader title="Hva slags flytting er det?" />
+      <div className="mt-4 flex flex-col gap-5">
+        <div>
+          <p className="mb-2 text-sm text-ink/50">Type</p>
+          <div className="grid grid-cols-3 gap-2">
+            <PillButton
+              selected={flytteType === "privat"}
+              onClick={() => onFlytteType("privat")}
+            >
+              Privat
+            </PillButton>
+            <PillButton
+              selected={flytteType === "bedrift"}
+              onClick={() => onFlytteType("bedrift")}
+            >
+              Bedrift
+            </PillButton>
+            <PillButton
+              selected={flytteType === "internasjonal"}
+              onClick={() => onFlytteType("internasjonal")}
+            >
+              Internasjonal
+            </PillButton>
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 text-sm text-ink/50">Størrelse</p>
+          <div className="grid grid-cols-2 gap-2">
+            <PillButton
+              selected={boligtype === "leilighet"}
+              onClick={() => onBoligtype("leilighet")}
+            >
+              Leilighet
+            </PillButton>
+            <PillButton
+              selected={boligtype === "rekkehus"}
+              onClick={() => onBoligtype("rekkehus")}
+            >
+              Rekkehus
+            </PillButton>
+            <PillButton
+              selected={boligtype === "enebolig"}
+              onClick={() => onBoligtype("enebolig")}
+            >
+              Enebolig
+            </PillButton>
+            <PillButton
+              selected={boligtype === "annet"}
+              onClick={() => onBoligtype("annet")}
+            >
+              Annet
+            </PillButton>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+type Adresseforslag = {
+  adressetekst: string;
+  postnummer: string;
+  poststed: string;
+  representasjonspunkt?: { lat: number; lon: number };
+};
+
+function AddressField({
   label,
   value,
   onChange,
+  placeholder,
+  onUseMyLocation,
 }: {
   label: string;
   value: string;
-  onChange: (v: string) => void;
+  onChange: (v: string, coord?: Coord | null) => void;
+  placeholder?: string;
+  onUseMyLocation?: () => void;
 }) {
+  const [forslag, setForslag] = useState<Adresseforslag[]>([]);
+  const [focused, setFocused] = useState(false);
+  const [justSelected, setJustSelected] = useState(false);
+
+  useEffect(() => {
+    if (justSelected) {
+      setJustSelected(false);
+      return;
+    }
+    if (!focused || value.trim().length < 2) {
+      setForslag([]);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://ws.geonorge.no/adresser/v1/sok?sok=${encodeURIComponent(value)}&treffPerSide=8&side=0`,
+          { signal: controller.signal },
+        );
+        if (!res.ok) return;
+        const json = (await res.json()) as { adresser?: Adresseforslag[] };
+        setForslag(json.adresser ?? []);
+      } catch {
+        // Ignorer abort/nettverksfeil
+      }
+    }, 200);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [value, focused, justSelected]);
+
+  const velg = (a: Adresseforslag) => {
+    const coord = a.representasjonspunkt
+      ? { lat: a.representasjonspunkt.lat, lon: a.representasjonspunkt.lon }
+      : null;
+    onChange(`${a.adressetekst}, ${a.postnummer} ${a.poststed}`, coord);
+    setForslag([]);
+    setJustSelected(true);
+  };
+
+  const visForslag =
+    focused && (forslag.length > 0 || Boolean(onUseMyLocation));
+
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
-        {label}
-      </span>
-      <input
-        type="text"
-        inputMode="numeric"
-        pattern="\d{4}"
-        maxLength={4}
-        value={value}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
-        placeholder="0000"
-        className="w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
-      />
-    </label>
+    <div className="relative">
+      <label className="block">
+        <span className="mb-1.5 block text-sm text-ink/50">
+          {label}
+        </span>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value, null)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 120)}
+          placeholder={placeholder}
+          autoComplete="off"
+          className="w-full rounded-[14px] border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
+        />
+      </label>
+      {visForslag ? (
+        <ul className="absolute top-full right-0 left-0 z-50 mt-1 max-h-72 overflow-y-auto rounded-[14px] border border-ink/10 bg-surface shadow-lg">
+          {onUseMyLocation ? (
+            <li>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onUseMyLocation();
+                  setFocused(false);
+                }}
+                className="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-ink transition-colors hover:bg-[#F3EEE3]"
+              >
+                <MapPin className="h-4 w-4 text-ink/60" />
+                Bruk min plassering
+              </button>
+            </li>
+          ) : null}
+          {forslag.map((a, i) => (
+            <li key={`${a.adressetekst}-${a.postnummer}-${i}`}>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => velg(a)}
+                className="flex w-full flex-col items-start gap-0.5 px-4 py-3 text-left text-sm transition-colors hover:bg-[#F3EEE3]"
+              >
+                <span className="text-ink">{a.adressetekst}</span>
+                <span className="text-xs text-ink/50">
+                  {a.postnummer} {a.poststed}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
-function Step3({
-  boligtype,
-  rooms,
-  onBoligtype,
-  onRooms,
-}: {
-  boligtype: WizardData["boligtype"];
-  rooms: string;
-  onBoligtype: (v: Boligtype) => void;
-  onRooms: (v: string) => void;
-}) {
-  const types: { value: Boligtype; label: string }[] = [
-    { value: "leilighet", label: "Leilighet" },
-    { value: "rekkehus", label: "Rekkehus" },
-    { value: "enebolig", label: "Enebolig" },
-    { value: "annet", label: "Annet" },
-  ];
-  const roomOptions = ["1", "2", "3", "4", "5+"];
-  return (
-    <>
-      <StepHeader title="Hva slags bolig er det?" />
-      <div className="mt-2">
-        <p className="mb-2 text-xs uppercase tracking-[0.06em] text-ink/40">
-          Boligtype
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {types.map((t) => (
-            <PillButton
-              key={t.value}
-              selected={boligtype === t.value}
-              onClick={() => onBoligtype(t.value)}
-            >
-              {t.label}
-            </PillButton>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4">
-        <p className="mb-2 text-xs uppercase tracking-[0.06em] text-ink/40">
-          Antall rom
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {roomOptions.map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => onRooms(r)}
-              className={cn(
-                "h-12 min-w-12 rounded-lg border-[1.5px] px-4 text-sm font-medium transition-colors",
-                rooms === r
-                  ? "border-brand bg-brand text-brand-ink"
-                  : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
-              )}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
-
-function Step4({
+function StepDato({
   date,
   fleksibel,
   onDate,
@@ -517,7 +1031,7 @@ function Step4({
       />
       <div className="mt-2 flex flex-col gap-4">
         <label className="block">
-          <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
+          <span className="mb-1.5 block text-sm text-ink/50">
             Ønsket flyttedato
           </span>
           <input
@@ -529,7 +1043,7 @@ function Step4({
             }}
             disabled={fleksibel}
             className={cn(
-              "w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand",
+              "w-full rounded-[14px] border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand",
               fleksibel && "opacity-50",
             )}
           />
@@ -562,54 +1076,99 @@ function Step4({
   );
 }
 
-function Step5({
-  selected,
-  onToggle,
+function StepGods({
+  beskrivelse,
+  bilder,
+  onBeskrivelse,
+  onBilderChange,
 }: {
-  selected: string[];
-  onToggle: (label: string) => void;
+  beskrivelse: string;
+  bilder: File[];
+  onBeskrivelse: (v: string) => void;
+  onBilderChange: (v: File[]) => void;
 }) {
+  const previews = useMemo(
+    () => bilder.map((f) => URL.createObjectURL(f)),
+    [bilder],
+  );
+  useEffect(
+    () => () => previews.forEach((url) => URL.revokeObjectURL(url)),
+    [previews],
+  );
+
+  const handleFiles = (files: FileList | null) => {
+    if (!files) return;
+    onBilderChange([...bilder, ...Array.from(files)]);
+  };
+
+  const removeAt = (i: number) =>
+    onBilderChange(bilder.filter((_, idx) => idx !== i));
+
   return (
     <>
       <StepHeader
-        title="Trenger du noe ekstra?"
-        subtitle="Velg én eller flere — du kan hoppe over"
+        title="Hva skal du flytte?"
+        subtitle="Legg til bilder eller en beskrivelse av tingene dine."
       />
-      <div className="mt-2 grid gap-2 sm:grid-cols-2">
-        {TILLEGG.map((t) => {
-          const isSelected = selected.includes(t);
-          return (
-            <button
-              key={t}
-              type="button"
-              onClick={() => onToggle(t)}
-              className={cn(
-                "flex items-center gap-3 rounded-xl border-[1.5px] px-4 py-3.5 text-left text-sm transition-colors",
-                isSelected
-                  ? "border-brand bg-[#EDE5D8] text-ink"
-                  : "border-transparent bg-[#F3EEE3] text-ink/60 hover:bg-[#E8E0D0]",
-              )}
-            >
-              <span
-                className={cn(
-                  "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-[1.5px] transition-colors",
-                  isSelected ? "border-brand bg-brand" : "border-ink/20",
-                )}
+      <div className="mt-4 flex flex-col gap-6">
+        <label className="block">
+          <span className="mb-2 block text-base font-medium text-ink">
+            Beskrivelse
+          </span>
+          <textarea
+            value={beskrivelse}
+            onChange={(e) => onBeskrivelse(e.target.value)}
+            placeholder="F.eks. 3-seters sofa, stort spisebord, 2 senger, 10 esker..."
+            rows={4}
+            className="w-full resize-none rounded-[14px] border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
+          />
+        </label>
+        <div>
+          <p className="mb-1 text-base font-medium text-ink">Bilder</p>
+          <p className="mb-3 text-sm text-ink/50">
+            Legg ved bilder av tingene dine for et mer presist tilbud.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {previews.map((url, i) => (
+              <div
+                key={url}
+                className="relative aspect-square overflow-hidden rounded-[14px]"
               >
-                {isSelected ? (
-                  <Check className="h-3 w-3 text-brand-ink" />
-                ) : null}
-              </span>
-              {t}
-            </button>
-          );
-        })}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeAt(i)}
+                  aria-label="Fjern bilde"
+                  className="absolute top-1 right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-ink/70 text-white transition-colors hover:bg-ink"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+            <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1.5 rounded-[14px] border-[1.5px] border-dashed border-ink/20 bg-[#F7F5F1] text-xs text-ink/60 transition-colors hover:border-ink/40">
+              <Upload className="h-4 w-4" />
+              <span>Last opp</span>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => handleFiles(e.target.files)}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
       </div>
     </>
   );
 }
 
-function Step6({
+function StepKontakt({
   navn,
   telefon,
   epost,
@@ -675,7 +1234,7 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs uppercase tracking-[0.06em] text-ink/40">
+      <span className="mb-1.5 block text-sm text-ink/50">
         {label}
       </span>
       <input
@@ -684,24 +1243,119 @@ function TextField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
-        className="w-full rounded-xl border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
+        className="w-full rounded-[14px] border-[1.5px] border-ink/10 bg-[#F7F5F1] px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-brand"
       />
     </label>
+  );
+}
+
+function Summary({ data }: { data: WizardData }) {
+  const typeLabel: Record<FlytteType, string> = {
+    privat: "Privat flytting",
+    bedrift: "Bedriftsflytting",
+    internasjonal: "Internasjonal",
+  };
+  const boligLabel: Record<Boligtype, string> = {
+    leilighet: "Leilighet",
+    rekkehus: "Rekkehus",
+    enebolig: "Enebolig",
+    annet: "Annet",
+  };
+  const formattedDate = data.flyttedato
+    ? new Date(data.flyttedato).toLocaleDateString("no-NO", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+  const previews = useMemo(
+    () => data.bilder.map((f) => URL.createObjectURL(f)),
+    [data.bilder],
+  );
+  useEffect(
+    () => () => previews.forEach((url) => URL.revokeObjectURL(url)),
+    [previews],
+  );
+
+  return (
+    <div className="flex h-full flex-col p-8 lg:p-9">
+      <span className="text-sm text-ink/45">
+        Kvittering
+      </span>
+      <h3 className="mt-2 font-serif text-2xl font-medium leading-tight text-ink">
+        Din forespørsel
+      </h3>
+      <p className="mt-2 text-sm text-ink/50">
+        Vi sender denne til tre kvalitetssjekkede byråer i ditt område.
+      </p>
+
+      <div className="mt-7 flex flex-col gap-5">
+        {data.fra ? <SummaryRow label="Fra" value={data.fra} /> : null}
+        {data.til ? <SummaryRow label="Til" value={data.til} /> : null}
+        {data.flytteType || data.boligtype ? (
+          <SummaryRow
+            label="Flytting"
+            value={[
+              data.flytteType ? typeLabel[data.flytteType] : null,
+              data.boligtype ? boligLabel[data.boligtype] : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          />
+        ) : null}
+        {formattedDate || data.fleksibel ? (
+          <SummaryRow
+            label="Når"
+            value={data.fleksibel ? "Fleksibel dato" : (formattedDate ?? "")}
+          />
+        ) : null}
+        {data.beskrivelse.trim() ? (
+          <SummaryRow label="Innhold" value={data.beskrivelse.trim()} />
+        ) : null}
+        {data.bilder.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-sm text-ink/50">Bilder</span>
+            <div className="grid grid-cols-4 gap-1.5">
+              {previews.map((url) => (
+                <div
+                  key={url}
+                  className="relative aspect-square overflow-hidden rounded-[10px]"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-sm text-ink/50">{label}</span>
+      <span className="text-sm leading-snug text-ink">{value}</span>
+    </div>
   );
 }
 
 function ThankYou() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-6 text-center">
-      <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-accent-lime">
-        <Check className="h-8 w-8 text-[#3D5507]" strokeWidth={2.5} />
-      </span>
-      <h1 className="mt-6 max-w-xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
-        Takk for forespørselen!
+      <SuccessAnimation />
+      <h1 className="mt-8 max-w-xl font-serif text-4xl font-medium leading-[1.1] text-ink sm:text-5xl">
+        Forespørselen er sendt!
       </h1>
-      <p className="mt-5 max-w-md text-base text-ink-muted sm:text-lg">
-        Vi kobler deg med tre kvalitetssjekkede byråer. Du hører fra oss innen
-        24 timer.
+      <p className="mt-5 max-w-lg text-base text-ink-muted sm:text-lg">
+        Vi har nå sendt forespørselen din til kvalitetssjekkede byråer i ditt
+        område. Du mottar tilbud på e-post innen kort tid.
       </p>
       <Link
         href="/"
@@ -709,6 +1363,26 @@ function ThankYou() {
       >
         Tilbake til forsiden
       </Link>
+    </div>
+  );
+}
+
+function SuccessAnimation() {
+  return (
+    <div className="relative inline-flex h-28 w-28 items-center justify-center">
+      <span className="success-ripple absolute inset-0 rounded-full bg-accent-lime/40" />
+      <span className="success-circle relative inline-flex h-24 w-24 items-center justify-center rounded-full bg-accent-lime">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <path
+            className="success-check"
+            d="M16 28 L24 36 L40 20"
+            stroke="#3D5507"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
     </div>
   );
 }

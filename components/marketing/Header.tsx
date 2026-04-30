@@ -33,12 +33,20 @@ export function Header() {
         >
           Meny
         </button>
-        <Link
-          href="/wizard"
-          className="hidden items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90 lg:inline-flex"
-        >
-          Få tilbud gratis
-        </Link>
+        <nav className="hidden items-center gap-2 lg:flex">
+          <Link
+            href="/partner"
+            className="inline-flex items-center rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-ink/5"
+          >
+            For flyttebyråer
+          </Link>
+          <Link
+            href="/wizard"
+            className="inline-flex items-center rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-ink transition-colors hover:bg-brand/90"
+          >
+            Få tilbud gratis
+          </Link>
+        </nav>
       </div>
     </header>
   );

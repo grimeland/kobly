@@ -1,64 +1,65 @@
 import Image from "next/image";
-import { Play } from "lucide-react";
 
-type Person = {
+type Sitat = {
+  quote: string;
   name: string;
-  title: string;
+  role: string;
   src: string;
 };
 
-const people: Person[] = [
+const sitater: Sitat[] = [
   {
+    quote:
+      "Kobly fant meg tre seriøse byråer i løpet av få timer. Sparte meg for både tid og masse penger.",
     name: "Kristoffer Skogen",
-    title: "Daglig leder, Flyttegutta Bergen",
-    src: "/images/portrait-kristoffer.jpg",
+    role: "Privatkunde, Bergen",
+    src: "/images/ciocan-ciprian-_Z2eTqGL7dg-unsplash.jpg",
   },
   {
+    quote:
+      "Vi fikk skreddersydde tilbud uten å måtte ringe ti forskjellige byråer selv. Anbefales på det varmeste.",
     name: "Sunniva Thune",
-    title: "Flyttekoordinator, Næringsflytt",
-    src: "/images/portrait-sunniva.jpg",
+    role: "Næringsflytting, Oslo",
+    src: "/images/sinitta-leunen-Y6fw-exCnsg-unsplash.jpg",
   },
   {
+    quote:
+      "Trygg og enkel prosess fra start til slutt. Byråene som tok kontakt var profesjonelle og hyggelige.",
     name: "Eivind Johansen",
-    title: "Daglig leder, Flyttefoten",
-    src: "/images/portrait-eivind.jpg",
+    role: "Privatkunde, Trondheim",
+    src: "/images/veronika-trushkevich-krFfLPfSj4k-unsplash.jpg",
   },
 ];
 
 export function Testimonials() {
   return (
-    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
+    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-40">
       <div className="mx-auto max-w-6xl">
-        <h2 className="mx-auto max-w-2xl text-center font-serif text-3xl font-semibold leading-[1.15] text-ink sm:text-4xl">
-          De beste i bransjen.
-          <br />
-          Her for å hjelpe deg.
+        <h2
+          className="mx-auto max-w-2xl text-center text-3xl font-semibold leading-[1.1] text-ink sm:text-[42px]"
+          style={{ fontFeatureSettings: '"cv11"' }}
+        >
+          Hva sier kundene våre?
         </h2>
-        <div className="mt-10 grid gap-6 sm:mt-12 md:grid-cols-3">
-          {people.map((p) => (
-            <article key={p.name} className="flex flex-col">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-line">
+        <div className="mt-12 grid gap-8 sm:mt-14 md:grid-cols-3 md:gap-6 lg:gap-10">
+          {sitater.map((s) => (
+            <article key={s.name} className="flex flex-col">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[14px] bg-line">
                 <Image
-                  src={p.src}
-                  alt={p.name}
+                  src={s.src}
+                  alt=""
                   fill
                   sizes="(min-width: 768px) 33vw, 90vw"
                   className="object-cover"
                 />
-                <div className="absolute inset-x-0 top-0 flex justify-start p-4 sm:p-5">
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-2 rounded-full bg-black/40 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55"
-                  >
-                    <Play className="h-3 w-3 fill-white" strokeWidth={0} />
-                    Spill av video
-                  </button>
-                </div>
               </div>
-              <div className="mt-4">
-                <p className="text-base font-semibold text-ink">{p.name}</p>
-                <p className="mt-0.5 text-sm text-ink-muted">{p.title}</p>
-              </div>
+              <p className="mt-6 text-xl leading-[1.3] text-ink sm:text-[22px]">
+                “{s.quote}”
+              </p>
+              <p className="mt-4 text-sm text-ink-muted">
+                {s.name}
+                <span className="text-ink/40"> · {s.role}</span>
+              </p>
             </article>
           ))}
         </div>

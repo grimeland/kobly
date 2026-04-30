@@ -1,64 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 const partners = [
-  {
-    name: "LØFT",
-    mark: (
-      <span className="font-display text-3xl font-bold tracking-tight text-ink/85">
-        L<span className="inline-block -translate-y-0.5">∧</span>FT
-      </span>
-    ),
-  },
-  {
-    name: "relok.",
-    mark: (
-      <span className="text-2xl font-bold tracking-tight text-ink/85">
-        relok<span className="text-accent-amber">.</span>
-      </span>
-    ),
-  },
-  {
-    name: "Flyttefoten",
-    mark: (
-      <span className="inline-flex items-center gap-2">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#D04A3B]">
-          <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="currentColor" aria-hidden>
-            <path d="M12 3 3 11h2v9h6v-6h2v6h6v-9h2L12 3Z" />
-          </svg>
-        </span>
-        <span className="text-xl font-bold tracking-tight text-ink/85">
-          Flyttefoten
-        </span>
-      </span>
-    ),
-  },
-  {
-    name: "FlytteSjef",
-    mark: (
-      <span className="inline-flex items-center gap-2">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#1F3A2E]">
-          <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" aria-hidden>
-            <path d="M4 18h16M4 18V8l8-4 8 4v10M9 18v-6h6v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </span>
-        <span className="text-xl font-bold leading-tight tracking-tight text-ink/85">
-          FlytteSjef
-        </span>
-      </span>
-    ),
-  },
+  { name: "LØFT", src: "/images/loeftlogo.svg" },
+  { name: "relok.", src: "/images/reloklogo.png" },
+  { name: "Flyttefoten", src: "/images/flyttefotenlogo.png" },
+  { name: "Flytteb", src: "/images/flytteblogo.png" },
 ];
 
 export function Trust() {
   return (
-    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
+    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-40">
       <div className="mx-auto max-w-6xl">
-        <div className="mx-auto flex max-w-3xl flex-col text-left lg:items-center lg:text-center">
-          <h2 className="font-serif text-3xl font-semibold leading-[1.1] text-balance text-ink sm:text-4xl lg:max-w-md">
+        <div className="flex flex-col text-left">
+          <h2 className="text-3xl font-semibold leading-[1.1] text-balance text-ink sm:text-[42px]">
             Norges smarteste tilbudstjeneste
           </h2>
-          <p className="mt-4 text-base text-ink-muted sm:text-lg lg:max-w-xl">
+          <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">
             Kobly flytter ikke selv — vi samler byråene som gjør det best, og
             kobler deg med tre som passer akkurat din flytting.
           </p>
@@ -78,11 +37,23 @@ export function Trust() {
             </a>
           </div>
         </div>
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:mt-16 sm:gap-x-14">
+        <div className="mt-12 flex flex-wrap items-center justify-start gap-x-10 gap-y-6 sm:mt-16 sm:gap-x-14">
           {partners.map((p) => (
-            <div key={p.name} aria-label={p.name} className="flex items-center">
-              {p.mark}
-            </div>
+            <Image
+              key={p.name}
+              src={p.src}
+              alt={p.name}
+              width={400}
+              height={140}
+              quality={100}
+              unoptimized
+              className="h-10 w-auto object-contain opacity-80 sm:h-11"
+              style={
+                p.name === "relok."
+                  ? { mixBlendMode: "multiply" }
+                  : undefined
+              }
+            />
           ))}
         </div>
       </div>

@@ -27,10 +27,10 @@ const services = [
 
 export function Services() {
   return (
-    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-32">
+    <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-40">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col items-center text-center">
-          <h2 className="font-serif text-3xl font-semibold text-ink sm:text-4xl">
+          <h2 className="text-3xl font-semibold text-ink sm:text-[42px] sm:leading-[1.1]">
             Alt du trenger på ett sted
           </h2>
           <span
@@ -38,13 +38,13 @@ export function Services() {
             className="mt-3 inline-block h-1 w-16 rounded-full bg-accent-amber"
           />
         </div>
-        <div className="mt-10 grid gap-4 sm:gap-5 md:grid-cols-3">
+        <div className="mt-12 grid gap-4 sm:gap-6 md:grid-cols-3">
           {services.map((s) => (
             <article
               key={s.title}
-              className="rounded-2xl bg-surface p-6 ring-1 ring-line transition-colors hover:bg-surface/80 sm:p-7"
+              className="rounded-[14px] bg-surface-soft p-6 ring-1 ring-line transition-colors hover:bg-surface-soft/70 sm:p-7 lg:p-8"
             >
-              <h3 className="font-serif text-2xl font-semibold text-ink">
+              <h3 className="text-2xl font-semibold text-ink">
                 {s.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-base">

@@ -1,10 +1,23 @@
 import type { Metadata } from "next";
-import { DM_Sans, Crimson_Pro, Syne } from "next/font/google";
+import localFont from "next/font/local";
+import { Crimson_Pro, Syne } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
+const moderat = localFont({
+  variable: "--font-moderat",
+  display: "swap",
+  src: [
+    {
+      path: "./fonts/Moderat-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Moderat-Semibold.otf",
+      weight: "600",
+      style: "normal",
+    },
+  ],
 });
 
 const crimsonPro = Crimson_Pro({
@@ -31,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="nb"
-      className={`${dmSans.variable} ${crimsonPro.variable} ${syne.variable} h-full antialiased`}
+      className={`${moderat.variable} ${crimsonPro.variable} ${syne.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

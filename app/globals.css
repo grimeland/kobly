@@ -1,13 +1,27 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "leaflet/dist/leaflet.css";
+
+/* Override Tailwind preflight for Leaflet tiles */
+.leaflet-container img {
+  max-width: none !important;
+}
+.leaflet-container .leaflet-tile {
+  width: 256px !important;
+  height: 256px !important;
+}
+.leaflet-container.placing-mode,
+.leaflet-container.placing-mode * {
+  cursor: crosshair !important;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-moderat), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-crimson), ui-serif, Georgia, serif;
-  --font-display: var(--font-syne), var(--font-dm-sans), sans-serif;
+  --font-display: var(--font-syne), var(--font-moderat), sans-serif;
   --font-heading: var(--font-crimson), ui-serif, Georgia, serif;
 
   /* Brand surfaces */
@@ -88,7 +102,7 @@
   --radius: 0.625rem;
 
   /* Override Tailwind defaults for font-* utilities */
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-moderat), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-crimson), ui-serif, Georgia, serif;
 }
 
@@ -159,3 +173,87 @@
 @utility wizard-fade-in {
   animation: wizard-fade-in 260ms ease;
 }
+
+@keyframes success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes success-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes success-ripple {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.success-circle {
+  animation: success-pop 460ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-check {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: success-check-draw 380ms 380ms ease-out forwards;
+}
+
+.success-ripple {
+  animation: success-ripple 1.4s 480ms ease-out infinite;
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee-track {
+  width: max-content;
+  animation: marquee-x 100s linear infinite;
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 6%,
+      black 94%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 6%,
+      black 94%,
+      transparent 100%
+    );
+  }
+}
+
