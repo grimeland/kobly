@@ -15,7 +15,7 @@ const tiles = Array.from({ length: 4 }, () => baseTiles).flat();
 
 export function ImageStrip() {
   return (
-    <section className="relative pb-20 sm:pb-28 lg:pb-32">
+    <section className="pb-20 sm:pb-28 lg:pb-32">
       <div className="marquee-mask overflow-hidden">
         <div className="marquee-track flex gap-4 sm:gap-5">
           {tiles.map((src, i) => (
@@ -36,8 +36,8 @@ export function ImageStrip() {
           ))}
         </div>
       </div>
-      <div className="pointer-events-none absolute inset-0 z-10 flex items-center px-6 pb-20 sm:px-10 sm:pb-28 lg:pb-32">
-        <div className="pointer-events-auto mx-auto w-full max-w-3xl">
+      <div className="mt-10 px-6 sm:mt-14 sm:px-10 lg:mt-16">
+        <div className="mx-auto max-w-5xl">
           <Stats compact />
         </div>
       </div>
