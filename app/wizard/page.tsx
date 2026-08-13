@@ -27,6 +27,44 @@ const WIZARD_IMAGES: Record<number, string> = {
   4: "/images/R1-09476-0028.jpg",
 };
 
+/**
+ * Bakgrunnsbilde per steg på mobil, hentet fra samme optimaliserte sett som
+ * desktop bruker. To bevisste avvik:
+ *
+ * - Steg 1 (kart) og steg 5 (oppsummering) har ikke stemningsbilde på desktop,
+ *   og får det rolige fellesbildet i stedet for et steg-spesifikt motiv.
+ * - Steg 4 sitt desktop-bilde har snitt-lyshet 39 av 255. Bak scrimen blir det
+ *   nesten sort, så mobil bruker steg 1-bildet, som ellers er ubrukt her.
+ */
+const MOBILE_BACKGROUNDS: Record<number, string> = {
+  1: "/images/boxes-and-plants.jpg",
+  2: WIZARD_IMAGES[2],
+  3: WIZARD_IMAGES[3],
+  4: WIZARD_IMAGES[1],
+  5: "/images/boxes-and-plants.jpg",
+};
+
+/** Tittel og undertittel per steg. Vises utenfor kortet på mobil. */
+const STEP_META: Record<number, { title: string; subtitle?: string }> = {
+  1: {
+    title: "Hvor skal du flytte?",
+    subtitle: "Skriv inn fra-adresse og til-adresse",
+  },
+  2: { title: "Hva slags flytting er det?" },
+  3: {
+    title: "Når skal du flytte?",
+    subtitle: "Velg en dato eller la oss vite om du er fleksibel",
+  },
+  4: {
+    title: "Hva skal du flytte?",
+    subtitle: "Legg til bilder eller en beskrivelse av tingene dine.",
+  },
+  5: {
+    title: "La oss ta kontakt",
+    subtitle: "Vi kobler deg med tre byråer. Du hører fra dem innen 24 timer.",
+  },
+};
+
 type FlytteType = "privat" | "bedrift" | "internasjonal";
 type Boligtype = "leilighet" | "rekkehus" | "enebolig" | "annet";
 
@@ -150,42 +188,118 @@ function WizardPageInner() {
     setSubmitted(true);
   };
 
+  // Mobilbakgrunnen krysstoner: forrige bilde blir liggende til det nye har tonet inn.
+  const mobileBackground = MOBILE_BACKGROUNDS[step];
+  const prevBackgroundRef = useRef(mobileBackground);
+  const [fadingOut, setFadingOut] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (prevBackgroundRef.current === mobileBackground) return;
+    setFadingOut(prevBackgroundRef.current);
+    prevBackgroundRef.current = mobileBackground;
+    const timer = setTimeout(() => setFadingOut(null), 400);
+    return () => clearTimeout(timer);
+  }, [mobileBackground]);
+
   if (submitted) return <ThankYou />;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-bg">
-      {/* Bakgrunnsbilde med overlay */}
-      <Image
-        src="/images/boxes-and-plants.jpg"
-        alt=""
-        aria-hidden
-        fill
-        priority
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-bg/85" aria-hidden />
+  const meta = STEP_META[step];
 
-      {/* Logo øverst */}
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-bg">
+      {/* Bakgrunn — desktop: fast bilde med lys overlay (uendret) */}
+      <div className="absolute inset-0 hidden lg:block" aria-hidden>
+        <Image
+          src="/images/boxes-and-plants.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-bg/85" />
+      </div>
+
+      {/* Bakgrunn — mobil: stegets bilde med scrim, myk crossfade ved bytte */}
+      <div className="absolute inset-0 lg:hidden" aria-hidden>
+        {fadingOut ? (
+          <Image
+            src={fadingOut}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        ) : null}
+        <Image
+          key={mobileBackground}
+          src={mobileBackground}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="wizard-fade-in object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-black/70" />
+      </div>
+
+      {/* Logo øverst — absolutt på desktop, i flyten på mobil */}
       <Link
         href="/"
         aria-label="Kobly hjem"
-        className="absolute left-1/2 top-7 z-10 -translate-x-1/2"
+        className="absolute left-1/2 top-7 z-10 hidden -translate-x-1/2 lg:block"
       >
         <Logo />
       </Link>
 
+      {/* Steg-tittel utenfor kortet — kun mobil */}
+      <div className="relative z-10 w-full px-6 pt-7 lg:hidden">
+        <Link href="/" aria-label="Kobly hjem" className="inline-block">
+          <Logo tone="brand-ink" />
+        </Link>
+
+        <div className="mt-7 flex gap-1">
+          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-0.5 flex-1 rounded-full transition-colors duration-300",
+                i < step ? "bg-white" : "bg-white/30",
+              )}
+            />
+          ))}
+        </div>
+
+        <div
+          key={`m-${step}`}
+          className={cn(
+            "mt-4",
+            direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
+          )}
+        >
+          <span className="text-sm text-white/70">
+            Steg {step} av {TOTAL_STEPS}
+          </span>
+          <h1 className="mt-1.5 font-serif text-3xl font-medium leading-[1.15] tracking-[-0.01em] text-balance text-white sm:text-4xl">
+            {meta.title}
+          </h1>
+          {meta.subtitle ? (
+            <p className="mt-2 text-sm text-white/75">{meta.subtitle}</p>
+          ) : null}
+        </div>
+      </div>
+
       {/* Kort */}
       <div
         className={cn(
-          "relative z-10 m-4 flex w-full max-w-[1060px] flex-col rounded-[14px] bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.14),0_4px_16px_rgba(0,0,0,0.06)]",
-          "min-h-[640px] sm:m-6",
+          "relative z-10 my-4 flex w-[calc(100%-3rem)] max-w-[1060px] flex-col rounded-[14px] bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.28),0_4px_16px_rgba(0,0,0,0.10)]",
+          "sm:my-6 lg:min-h-[640px]",
         )}
       >
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Venstre kolonne — innhold */}
           <div className="relative flex flex-1 flex-col p-6 pb-24 sm:p-9 sm:pb-24 lg:flex-[0_0_58%] lg:p-11 lg:pb-24">
-            {/* Segmenter */}
-            <div className="mb-5 flex gap-1">
+            {/* Segmenter — kun desktop, mobil har dem over kortet */}
+            <div className="mb-5 hidden gap-1 lg:flex">
               {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
                 <div
                   key={i}
@@ -205,7 +319,7 @@ function WizardPageInner() {
                 direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
               )}
             >
-              <span className="text-sm text-ink/45">
+              <span className="hidden text-sm text-ink/45 lg:block">
                 Steg {step} av {TOTAL_STEPS}
               </span>
 
@@ -698,6 +812,7 @@ function MapPanel({
   );
 }
 
+/** Steg-tittel inne i kortet. På mobil vises tittelen utenfor kortet i stedet. */
 function StepHeader({
   title,
   subtitle,
@@ -706,14 +821,14 @@ function StepHeader({
   subtitle?: string;
 }) {
   return (
-    <>
+    <div className="hidden flex-col gap-3.5 lg:flex">
       <h1 className="m-0 font-serif text-3xl font-medium leading-[1.15] tracking-[-0.01em] text-ink sm:text-4xl lg:text-[2.75rem]">
         {title}
       </h1>
       {subtitle ? (
         <p className="-mt-1 text-sm text-ink/40">{subtitle}</p>
       ) : null}
-    </>
+    </div>
   );
 }
 
