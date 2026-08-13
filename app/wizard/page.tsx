@@ -44,27 +44,6 @@ const MOBILE_BACKGROUNDS: Record<number, string> = {
   5: "/images/boxes-and-plants.jpg",
 };
 
-/** Tittel og undertittel per steg. Vises utenfor kortet på mobil. */
-const STEP_META: Record<number, { title: string; subtitle?: string }> = {
-  1: {
-    title: "Hvor skal du flytte?",
-    subtitle: "Skriv inn fra-adresse og til-adresse",
-  },
-  2: { title: "Hva slags flytting er det?" },
-  3: {
-    title: "Når skal du flytte?",
-    subtitle: "Velg en dato eller la oss vite om du er fleksibel",
-  },
-  4: {
-    title: "Hva skal du flytte?",
-    subtitle: "Legg til bilder eller en beskrivelse av tingene dine.",
-  },
-  5: {
-    title: "La oss ta kontakt",
-    subtitle: "Vi kobler deg med tre byråer. Du hører fra dem innen 24 timer.",
-  },
-};
-
 type FlytteType = "privat" | "bedrift" | "internasjonal";
 type Boligtype = "leilighet" | "rekkehus" | "enebolig" | "annet";
 
@@ -203,8 +182,6 @@ function WizardPageInner() {
 
   if (submitted) return <ThankYou />;
 
-  const meta = STEP_META[step];
-
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-bg">
       {/* Bakgrunn — desktop: fast bilde med lys overlay (uendret) */}
@@ -251,41 +228,11 @@ function WizardPageInner() {
         <Logo />
       </Link>
 
-      {/* Steg-tittel utenfor kortet — kun mobil */}
-      <div className="relative z-10 w-full px-6 pt-7 lg:hidden">
+      {/* Logo over kortet — kun mobil. Selve steget ligger inne i kortet. */}
+      <div className="relative z-10 w-full px-6 pt-8 pb-2 lg:hidden">
         <Link href="/" aria-label="Kobly hjem" className="inline-block">
           <Logo tone="brand-ink" />
         </Link>
-
-        <div className="mt-7 flex gap-1">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className={cn(
-                "h-0.5 flex-1 rounded-full transition-colors duration-300",
-                i < step ? "bg-white" : "bg-white/30",
-              )}
-            />
-          ))}
-        </div>
-
-        <div
-          key={`m-${step}`}
-          className={cn(
-            "mt-4",
-            direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
-          )}
-        >
-          <span className="text-sm text-white/70">
-            Steg {step} av {TOTAL_STEPS}
-          </span>
-          <h1 className="mt-1.5 font-serif text-3xl font-medium leading-[1.15] tracking-[-0.01em] text-balance text-white sm:text-4xl">
-            {meta.title}
-          </h1>
-          {meta.subtitle ? (
-            <p className="mt-2 text-sm text-white/75">{meta.subtitle}</p>
-          ) : null}
-        </div>
       </div>
 
       {/* Kort */}
@@ -298,8 +245,8 @@ function WizardPageInner() {
         <div className="flex flex-1 flex-col lg:flex-row">
           {/* Venstre kolonne — innhold */}
           <div className="relative flex flex-1 flex-col p-6 pb-24 sm:p-9 sm:pb-24 lg:flex-[0_0_58%] lg:p-11 lg:pb-24">
-            {/* Segmenter — kun desktop, mobil har dem over kortet */}
-            <div className="mb-5 hidden gap-1 lg:flex">
+            {/* Segmenter */}
+            <div className="mb-5 flex gap-1">
               {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
                 <div
                   key={i}
@@ -319,7 +266,7 @@ function WizardPageInner() {
                 direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
               )}
             >
-              <span className="hidden text-sm text-ink/45 lg:block">
+              <span className="text-sm text-ink/45">
                 Steg {step} av {TOTAL_STEPS}
               </span>
 
@@ -812,7 +759,6 @@ function MapPanel({
   );
 }
 
-/** Steg-tittel inne i kortet. På mobil vises tittelen utenfor kortet i stedet. */
 function StepHeader({
   title,
   subtitle,
@@ -821,7 +767,7 @@ function StepHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="hidden flex-col gap-3.5 lg:flex">
+    <div className="flex flex-col gap-3.5">
       <h1 className="m-0 font-serif text-3xl font-medium leading-[1.15] tracking-[-0.01em] text-ink sm:text-4xl lg:text-[2.75rem]">
         {title}
       </h1>
