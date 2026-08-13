@@ -86,6 +86,66 @@ export function row(inner: string, paddingTop = 0): string {
           </tr>`;
 }
 
+/** Nummerert liste som forklarer hva som skjer videre. */
+export function stepsList(steps: string[]): string {
+  const items = steps
+    .map(
+      (step, i) => `<tr>
+                      <td width="34" valign="top" style="padding:0 0 ${i === steps.length - 1 ? 0 : 16}px;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td width="26" height="26" align="center" valign="middle" bgcolor="${COLORS.lime}" style="width:26px; height:26px; border-radius:13px; font-family:${SANS}; font-size:13px; font-weight:600; color:${COLORS.ink};">${i + 1}</td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td valign="top" style="padding:0 0 ${i === steps.length - 1 ? 0 : 16}px;">
+                        <p style="margin:2px 0 0; font-family:${SANS}; font-size:15px; line-height:1.6; color:${COLORS.ink};">${step}</p>
+                      </td>
+                    </tr>`,
+    )
+    .join("\n");
+  return `<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">${items}</table>`;
+}
+
+/** Byråkort med logo, navn, rating og antall jobber. */
+export function agencyCard({
+  name,
+  logo,
+  rating,
+  reviewCount,
+  jobs,
+  baseUrl,
+}: {
+  name: string;
+  logo: string;
+  rating: string;
+  reviewCount: number;
+  jobs: number;
+  baseUrl: string;
+}): string {
+  return `<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color:${COLORS.surfaceSoft}; border:1px solid ${COLORS.line}; border-radius:14px;">
+                <tr>
+                  <td class="kobly-card" style="padding:22px 24px;">
+                    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td valign="middle" style="padding-bottom:14px;">
+                          <img src="${baseUrl}${logo}" height="30" alt="${name}" style="display:block; height:30px; width:auto; max-width:150px;" />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <p style="margin:0; font-family:${SANS}; font-size:18px; font-weight:600; line-height:1.3; color:${COLORS.ink};">${name}</p>
+                          <p style="margin:6px 0 0; font-family:${SANS}; font-size:14px; line-height:1.5; color:${COLORS.inkMuted};">
+                            <span style="color:${COLORS.ink}; font-weight:600;">${rating} ★</span> av ${reviewCount} kunder · ${jobs} jobber utført
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>`;
+}
+
 export function heading(text: string): string {
   return `<h1 style="margin:0; font-family:${SERIF}; font-size:28px; line-height:1.2; font-weight:normal; color:${COLORS.ink};">${text}</h1>`;
 }

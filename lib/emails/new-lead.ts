@@ -10,31 +10,21 @@ import {
   row,
 } from "./layout";
 
+import { LEAD } from "./dummy";
+
 /** E-post til flyttebyrå når en ny forespørsel er matchet til dem. */
 export const newLeadSubject =
   "Ny flytteforespørsel i Oslo – svar innen 24 timer";
 
-const LEAD = {
-  ref: "KOB-2026-4821",
-  fra: "Grünerløkka, Oslo (0555)",
-  til: "Nordstrand, Oslo (1170)",
-  dato: "Fredag 12. september 2026",
-  bolig: "3-roms leilighet, ca. 68 m²",
-  etasje: "3. etasje uten heis → 1. etasje med kort bæreavstand",
-  tillegg: "Flyttevask, pianotransport",
-  kommentar:
-    "Vi har et eldre piano i stua som må fraktes forsiktig. Ellers er det vanlig innbo. Kan være fleksible på tidspunkt på dagen.",
-};
-
 export function newLeadEmail(baseUrl: string): string {
   const leadCard = card(
     [
-      detailRow("Flytter fra", LEAD.fra),
-      detailRow("Flytter til", LEAD.til),
+      detailRow("Flytter fra", LEAD.fraKort),
+      detailRow("Flytter til", LEAD.tilKort),
       detailRow("Ønsket dato", LEAD.dato),
       detailRow("Boligtype", LEAD.bolig),
       detailRow("Etasje og heis", LEAD.etasje),
-      detailRow("Tilleggstjenester", LEAD.tillegg, true),
+      detailRow("Tilleggstjenester", "Flyttevask, pianotransport", true),
     ].join("\n"),
     `Forespørsel ${LEAD.ref}`,
   );
