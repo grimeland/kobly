@@ -84,7 +84,7 @@ export default async function AgencyPage({
                   mellom Kobly og byrået. */}
               <div className="hidden lg:block">
                 <HeroCard
-                  title={`Tilbud fra ${agency.name}`}
+                  title={null}
                   body={`På Kobly ber du aldri om bare ett tilbud. Vi sender forespørselen til ${agency.name} og to andre byråer som passer flyttingen, så du kan sammenligne før du velger.`}
                   cta={ctaLabel}
                   endVisual={

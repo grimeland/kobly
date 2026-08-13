@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function KoblyMark({ className }: { className?: string }) {
   return (
@@ -56,7 +57,8 @@ export function HeroCard({
   cta = "Få 3 tilbud gratis",
   endVisual,
 }: {
-  title?: string;
+  /** Send null når ikonraden allerede sier hva kortet gjelder. */
+  title?: string | null;
   body?: string;
   href?: string;
   cta?: string;
@@ -66,10 +68,17 @@ export function HeroCard({
   return (
     <div className="mx-auto w-full max-w-[400px] rounded-[14px] bg-surface-soft p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_32px_-16px_rgba(0,0,0,0.10)] ring-1 ring-black/[0.04]">
       <HeroIcons endVisual={endVisual} />
-      <h2 className="mt-7 text-center text-xl font-medium tracking-tight text-ink lg:text-2xl">
-        {title}
-      </h2>
-      <p className="mt-3 text-center text-sm leading-relaxed text-ink-muted">
+      {title ? (
+        <h2 className="mt-7 text-center text-xl font-medium tracking-tight text-ink lg:text-2xl">
+          {title}
+        </h2>
+      ) : null}
+      <p
+        className={cn(
+          "text-center text-sm leading-relaxed text-ink-muted",
+          title ? "mt-3" : "mt-7",
+        )}
+      >
         {body}
       </p>
       <Link
