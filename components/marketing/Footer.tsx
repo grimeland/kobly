@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -13,7 +13,14 @@ export function Footer() {
               Vi finner det beste flyttebyrået for deg. Kobly kobler
               privatpersoner med kvalitetssjekkede byråer i hele Norge.
             </p>
-            <p className="mt-10 text-xs text-brand-ink/40">
+            <Link
+              href="/email-preview"
+              className="mt-8 inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-brand-ink/80 ring-1 ring-brand-ink/20 transition-colors hover:bg-brand-ink/10 hover:text-brand-ink"
+            >
+              <Mail className="h-4 w-4" />
+              E-post
+            </Link>
+            <p className="mt-8 text-xs text-brand-ink/40">
               Kobly AS · © 2026
             </p>
           </div>
