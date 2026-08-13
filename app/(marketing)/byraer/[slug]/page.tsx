@@ -52,7 +52,7 @@ export default async function AgencyPage({
           <div className="mx-auto max-w-6xl">
             <Link
               href="/byraer"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+              className="-my-2 inline-flex items-center gap-1.5 py-2 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
             >
               <ArrowLeft className="h-4 w-4" />
               Alle byråer

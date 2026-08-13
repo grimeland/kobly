@@ -49,7 +49,7 @@ export default async function DistrictPage({
                 <li>
                   <Link
                     href="/"
-                    className="transition-colors hover:text-ink"
+                    className="-my-1.5 inline-block py-1.5 transition-colors hover:text-ink"
                   >
                     Kobly
                   </Link>
@@ -58,7 +58,7 @@ export default async function DistrictPage({
                 <li>
                   <Link
                     href="/oslo"
-                    className="transition-colors hover:text-ink"
+                    className="-my-1.5 inline-block py-1.5 transition-colors hover:text-ink"
                   >
                     Oslo
                   </Link>
