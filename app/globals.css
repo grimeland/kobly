@@ -112,7 +112,10 @@
   }
   body {
     @apply bg-bg text-ink;
-    font-feature-settings: "ss01", "cv11";
+    /* Ikke slå på ss01: den bytter ut ?, & og % med alternativer som ikke
+       finnes i Semibold, så tegnsettingen faller tilbake til Regular og ser
+       tynn ut ved siden av fete bokstaver. */
+    font-feature-settings: "cv11";
   }
   html {
     @apply font-sans;

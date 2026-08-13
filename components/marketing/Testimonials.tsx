@@ -35,10 +35,7 @@ export function Testimonials() {
   return (
     <section className="px-6 py-20 sm:px-10 sm:py-28 lg:py-40">
       <div className="mx-auto max-w-6xl">
-        <h2
-          className="mx-auto max-w-2xl text-center text-3xl font-semibold leading-[1.1] text-ink sm:text-[42px]"
-          style={{ fontFeatureSettings: '"cv11"' }}
-        >
+        <h2 className="mx-auto max-w-2xl text-center text-3xl font-semibold leading-[1.1] text-ink sm:text-[42px]">
           Hva sier kundene våre?
         </h2>
         <div className="mt-12 grid gap-8 sm:mt-14 md:grid-cols-3 md:gap-6 lg:gap-10">
