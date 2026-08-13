@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, MapPin } from "lucide-react";
 import { Header } from "@/components/marketing/Header";
 import { Footer } from "@/components/marketing/Footer";
+import { HeroCard } from "@/components/marketing/HeroCard";
 import { Stars } from "@/components/marketing/agency/Stars";
 import { AGENCIES, formatRating, getAgency } from "@/lib/agencies";
 import { formatDate } from "@/lib/utils";
@@ -60,21 +61,7 @@ export default async function AgencyPage({
 
             <div className="mt-8 grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-start lg:gap-16">
               <div>
-                <Image
-                  src={agency.logo}
-                  alt={agency.name}
-                  width={400}
-                  height={140}
-                  quality={100}
-                  unoptimized
-                  className="h-10 w-auto max-w-[170px] object-contain object-left sm:h-12"
-                  style={
-                    agency.logoBlendMultiply
-                      ? { mixBlendMode: "multiply" }
-                      : undefined
-                  }
-                />
-                <h1 className="mt-6 text-balance font-serif text-4xl font-semibold leading-[1.1] text-ink sm:text-[52px]">
+                <h1 className="text-balance font-serif text-4xl font-semibold leading-[1.1] text-ink sm:text-[52px]">
                   {agency.name}
                 </h1>
                 <p className="mt-4 text-lg text-ink-muted sm:text-xl">
@@ -93,26 +80,32 @@ export default async function AgencyPage({
                 </ul>
               </div>
 
-              {/* CTA-kort, synlig på desktop */}
-              <div className="hidden rounded-[14px] bg-brand p-8 text-brand-ink lg:block">
-                <p className="text-xl font-semibold">
-                  Tilbud fra {agency.name}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-brand-ink/70">
-                  På Kobly ber du aldri om bare ett tilbud. Vi sender
-                  forespørselen din til {agency.name} og to andre byråer som
-                  passer flyttingen, slik at du kan sammenligne før du velger.
-                </p>
-                <Link
-                  href="/wizard"
-                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-ink px-6 py-4 text-sm font-medium text-ink transition-colors hover:bg-brand-ink/90"
-                >
-                  {ctaLabel}
-                  <ArrowRight className="h-4 w-4 shrink-0" />
-                </Link>
-                <p className="mt-4 text-center text-xs text-brand-ink/50">
-                  Gratis og uforpliktende
-                </p>
+              {/* CTA-kort, synlig på desktop. Ikonraden viser koblingen
+                  mellom Kobly og byrået. */}
+              <div className="hidden lg:block">
+                <HeroCard
+                  title={`Tilbud fra ${agency.name}`}
+                  body={`På Kobly ber du aldri om bare ett tilbud. Vi sender forespørselen til ${agency.name} og to andre byråer som passer flyttingen, så du kan sammenligne før du velger.`}
+                  cta={ctaLabel}
+                  endVisual={
+                    <span className="inline-flex h-12 items-center justify-center">
+                      <Image
+                        src={agency.logo}
+                        alt={agency.name}
+                        width={400}
+                        height={140}
+                        quality={100}
+                        unoptimized
+                        className="h-9 w-auto max-w-[130px] object-contain"
+                        style={
+                          agency.logoBlendMultiply
+                            ? { mixBlendMode: "multiply" }
+                            : undefined
+                        }
+                      />
+                    </span>
+                  }
+                />
               </div>
             </div>
           </div>
