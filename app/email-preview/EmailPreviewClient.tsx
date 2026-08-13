@@ -107,8 +107,15 @@ function EmailFrame({
   useEffect(() => {
     let frames = 0;
     const timer = setInterval(() => {
-      const measured = ref.current?.contentDocument?.body?.scrollHeight;
-      if (measured && measured > 0) setHeight(measured);
+      const doc = ref.current?.contentDocument;
+      if (!doc) return;
+      // Litt slingringsmonn, ellers dukker det opp en scrollbar på noen av malene.
+      const measured =
+        Math.max(
+          doc.body?.scrollHeight ?? 0,
+          doc.documentElement?.scrollHeight ?? 0,
+        ) + 4;
+      if (measured > 4) setHeight(measured);
       if (++frames > 20) clearInterval(timer);
     }, 150);
     return () => clearInterval(timer);
@@ -119,8 +126,9 @@ function EmailFrame({
       ref={ref}
       title={`${title} — e-postforhåndsvisning`}
       srcDoc={html}
+      scrolling="no"
       style={{ width, height }}
-      className="mx-auto block max-w-full rounded-[10px] bg-white"
+      className="mx-auto block max-w-full overflow-hidden rounded-[10px] bg-white"
     />
   );
 }
