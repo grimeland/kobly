@@ -1,13 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-
-const partners = [
-  { name: "LØFT", src: "/images/loeftlogo.svg" },
-  { name: "relok.", src: "/images/reloklogo.png" },
-  { name: "Flyttefoten", src: "/images/flyttefotenlogo.png" },
-  { name: "Flytteb", src: "/images/flytteblogo.png" },
-];
+import { AGENCIES } from "@/lib/agencies";
 
 export function Trust() {
   return (
@@ -29,31 +23,32 @@ export function Trust() {
               Få 3 tilbud gratis
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <a
-              href="#"
+            <Link
+              href="/byraer"
               className="inline-flex items-center rounded-full px-5 py-3 text-sm font-medium text-ink ring-1 ring-line transition-colors hover:bg-ink/5"
             >
               Møt byråene
-            </a>
+            </Link>
           </div>
         </div>
         <div className="mt-12 flex flex-wrap items-center justify-start gap-x-10 gap-y-6 sm:mt-16 sm:gap-x-14">
-          {partners.map((p) => (
-            <Image
-              key={p.name}
-              src={p.src}
-              alt={p.name}
-              width={400}
-              height={140}
-              quality={100}
-              unoptimized
-              className="h-10 w-auto object-contain opacity-80 sm:h-11"
-              style={
-                p.name === "relok."
-                  ? { mixBlendMode: "multiply" }
-                  : undefined
-              }
-            />
+          {AGENCIES.map((agency) => (
+            <Link key={agency.slug} href={`/byraer/${agency.slug}`}>
+              <Image
+                src={agency.logo}
+                alt={agency.name}
+                width={400}
+                height={140}
+                quality={100}
+                unoptimized
+                className="h-10 w-auto object-contain opacity-80 transition-opacity hover:opacity-100 sm:h-11"
+                style={
+                  agency.logoBlendMultiply
+                    ? { mixBlendMode: "multiply" }
+                    : undefined
+                }
+              />
+            </Link>
           ))}
         </div>
       </div>
