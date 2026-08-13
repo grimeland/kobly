@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/marketing/Logo";
+import { MapPickerOverlay } from "@/components/wizard/MapPickerOverlay";
 import { CITIES, type CityKey } from "@/lib/cities";
 
 const WIZARD_IMAGES: Record<number, string> = {
@@ -212,6 +213,9 @@ function WizardPageInner() {
                 <StepAdresse
                   fra={data.fra}
                   til={data.til}
+                  fraCoord={data.fraCoord}
+                  tilCoord={data.tilCoord}
+                  initialCenter={initialCenter}
                   onFra={(v, coord) => {
                     update("fra", v);
                     if (coord !== undefined) update("fraCoord", coord);
@@ -781,14 +785,23 @@ function BlockCard({
 function StepAdresse({
   fra,
   til,
+  fraCoord,
+  tilCoord,
+  initialCenter,
   onFra,
   onTil,
 }: {
   fra: string;
   til: string;
+  fraCoord: Coord | null;
+  tilCoord: Coord | null;
+  initialCenter?: { lat: number; lon: number; zoom: number } | null;
   onFra: (v: string, coord?: Coord | null) => void;
   onTil: (v: string, coord?: Coord | null) => void;
 }) {
+  // Kartvelgeren finnes bare på mobil. På desktop ligger kartet i høyre kolonne.
+  const [picker, setPicker] = useState<"fra" | "til" | null>(null);
+
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -809,21 +822,82 @@ function StepAdresse({
         subtitle="Skriv inn fra-adresse og til-adresse"
       />
       <div className="mt-4 flex flex-col gap-3.5">
-        <AddressField
-          label="Fra adresse"
-          value={fra}
-          onChange={onFra}
-          placeholder="F.eks. Kongens gate 1, 0153 Oslo"
-          onUseMyLocation={handleUseMyLocation}
-        />
-        <AddressField
-          label="Til adresse"
-          value={til}
-          onChange={onTil}
-          placeholder="F.eks. Storgata 14, 0184 Oslo"
-        />
+        <div>
+          <AddressField
+            label="Fra adresse"
+            value={fra}
+            onChange={onFra}
+            placeholder="F.eks. Kongens gate 1, 0153 Oslo"
+            onUseMyLocation={handleUseMyLocation}
+          />
+          <MapPickerButton
+            onClick={() => setPicker("fra")}
+            placed={Boolean(fraCoord)}
+          />
+        </div>
+        <div>
+          <AddressField
+            label="Til adresse"
+            value={til}
+            onChange={onTil}
+            placeholder="F.eks. Storgata 14, 0184 Oslo"
+          />
+          <MapPickerButton
+            onClick={() => setPicker("til")}
+            placed={Boolean(tilCoord)}
+          />
+        </div>
       </div>
+
+      <MapPickerOverlay
+        open={picker !== null}
+        onClose={() => setPicker(null)}
+        title={
+          picker === "til" ? "Hvor flytter du til?" : "Hvor flytter du fra?"
+        }
+        initialCoord={picker === "til" ? tilCoord : fraCoord}
+        initialCenter={initialCenter}
+        reverseGeocode={(c) => reverseGeocodeAddress(c)}
+        onConfirm={(coord, address) => {
+          if (picker === "til") onTil(address, coord);
+          else onFra(address, coord);
+        }}
+      />
     </>
+  );
+}
+
+/** «Plasser i kart» under adressefeltet. Kun mobil. */
+function MapPickerButton({
+  onClick,
+  placed,
+}: {
+  onClick: () => void;
+  placed: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "mt-2 inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors lg:hidden",
+        placed
+          ? "bg-accent-lime/40 text-ink ring-1 ring-ink/10"
+          : "bg-ink/5 text-ink hover:bg-ink/10",
+      )}
+    >
+      {placed ? (
+        <>
+          <Check className="h-4 w-4 shrink-0" />
+          Plassering valgt · endre i kart
+        </>
+      ) : (
+        <>
+          <MapPin className="h-4 w-4 shrink-0" />
+          Plasser i kart
+        </>
+      )}
+    </button>
   );
 }
 
