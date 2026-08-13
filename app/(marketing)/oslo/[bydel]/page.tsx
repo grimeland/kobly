@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Trust } from "@/components/marketing/Trust";
 import { FAQ } from "@/components/marketing/FAQ";
 import { WizardCTA } from "@/components/marketing/WizardCTA";
+import { DistrictHero } from "@/components/marketing/DistrictHero";
 import { DistrictList } from "@/components/marketing/DistrictList";
 import { DISTRICTS, getDistrict } from "@/lib/districts";
 
@@ -70,28 +71,19 @@ export default async function DistrictPage({
               </ol>
             </nav>
 
-            <div className="mt-8 max-w-[680px]">
-              <h1 className="text-balance font-serif text-[2rem] font-semibold leading-[1.1] text-ink sm:text-[2.75rem] lg:text-[3.25rem]">
-                Flyttebyrå i {district.name} – få 3 tilbud gratis
-              </h1>
-              <p className="mt-5 text-lg leading-relaxed text-ink-muted sm:text-xl">
-                {district.lead}
-              </p>
-              <p className="mt-6 text-base leading-[1.75] text-ink">
-                {district.intro[0]}
-              </p>
-            </div>
-
-            <div className="mt-10 max-w-[680px]">
-              <WizardCTA />
-            </div>
           </div>
         </section>
 
-        {/* Lokale fakta */}
-        <section className="px-6 pt-16 sm:px-10 sm:pt-24">
+        <DistrictHero district={district} />
+
+        {/* Lokal tekst og fakta */}
+        <section className="px-6 sm:px-10">
           <div className="mx-auto max-w-6xl">
-            <div className="grid gap-6 lg:grid-cols-3">
+            <p className="max-w-[680px] text-base leading-[1.75] text-ink">
+              {district.intro[0]}
+            </p>
+
+            <div className="mt-12 grid gap-6 sm:mt-16 lg:grid-cols-3">
               <div className="rounded-[14px] bg-surface-soft p-6 ring-1 ring-line sm:p-7">
                 <MapPin aria-hidden className="h-5 w-5 text-ink/40" />
                 <h2 className="mt-4 text-lg font-semibold text-ink">
@@ -133,6 +125,10 @@ export default async function DistrictPage({
             <p className="mt-12 max-w-[680px] text-base leading-[1.75] text-ink sm:mt-16">
               {district.intro[1]}
             </p>
+
+            <div className="mt-10 max-w-[680px]">
+              <WizardCTA />
+            </div>
           </div>
         </section>
 
