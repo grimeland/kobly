@@ -78,23 +78,9 @@ export default async function DistrictPage({
         {/* Lokalt innhold. Unikt per bydel, så sidene ikke blir tynne duplikater. */}
         <section className="px-6 sm:px-10">
           <div className="mx-auto max-w-6xl">
-            <div className="flex max-w-[680px] flex-col gap-6">
-              <p className="text-base leading-[1.75] text-ink">
-                {district.intro[0]}
-              </p>
-              <p className="text-base leading-[1.75] text-ink">
-                {district.intro[1]}
-              </p>
-              <p className="text-base leading-[1.75] text-ink">
-                <span className="font-semibold">{district.movingTip.title}:</span>{" "}
-                {district.movingTip.body}
-              </p>
-              <p className="text-base leading-[1.75] text-ink-muted">
-                Byråene våre tar oppdrag i hele bydelen, blant annet{" "}
-                {district.areas.slice(0, -1).join(", ")} og{" "}
-                {district.areas[district.areas.length - 1]}.
-              </p>
-            </div>
+            <p className="max-w-[680px] text-base leading-[1.75] text-ink sm:text-lg">
+              {district.body}
+            </p>
           </div>
         </section>
 
