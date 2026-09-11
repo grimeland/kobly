@@ -139,7 +139,7 @@ function WizardPageInner() {
   const tema = temaFor(stegId, data.kunde === "bedrift");
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center bg-bg">
+    <div className="relative flex h-dvh flex-col items-center overflow-hidden bg-bg lg:h-auto lg:min-h-dvh lg:overflow-visible">
       {/* Bakgrunn: kun desktop. På mobil fyller flaten hele skjermen. */}
       <div className="absolute inset-0 hidden lg:block" aria-hidden>
         <Image
@@ -154,21 +154,21 @@ function WizardPageInner() {
       </div>
 
       {/* Logo */}
-      <div className="relative z-10 w-full max-w-[1060px] px-5 pt-5 pb-2 sm:px-8 lg:pt-7 lg:pb-4 lg:text-center">
+      <div className="relative z-10 w-full max-w-[1060px] shrink-0 px-5 pt-5 pb-2 sm:px-8 lg:pt-7 lg:pb-4 lg:text-center">
         <Link href="/" aria-label="Kobly hjem" className="inline-block">
           <Logo />
         </Link>
       </div>
 
       {/* Kortet */}
-      <div className="relative z-10 flex w-full max-w-[1060px] flex-1 flex-col lg:justify-center lg:px-8 lg:pb-10">
+      <div className="relative z-10 flex min-h-0 w-full max-w-[1060px] flex-1 flex-col lg:min-h-fit lg:justify-center lg:px-8 lg:pb-10">
         <div
           ref={cardRef}
-          className="flex w-full flex-1 flex-col bg-bg lg:min-h-[600px] lg:flex-row lg:bg-surface-soft lg:overflow-hidden lg:rounded-[18px] lg:shadow-[0_20px_60px_rgba(0,0,0,0.28),0_4px_16px_rgba(0,0,0,0.10)]"
+          className="flex min-h-0 w-full flex-1 flex-col bg-bg lg:min-h-[600px] lg:flex-row lg:bg-surface-soft lg:overflow-hidden lg:rounded-[18px] lg:shadow-[0_20px_60px_rgba(0,0,0,0.28),0_4px_16px_rgba(0,0,0,0.10)]"
         >
           {/* Venstre: framdrift, spørsmål, knapper */}
-          <div className="flex flex-1 flex-col px-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-8 lg:flex-[0_0_58%] lg:p-11">
-            <div className="mb-8 flex items-center gap-3">
+          <div className="flex min-h-0 flex-1 flex-col px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-8 lg:flex-[0_0_58%] lg:p-11">
+            <div className="mb-6 flex shrink-0 items-center gap-3 lg:mb-8">
               <div
                 className="flex flex-1 gap-[3px]"
                 role="progressbar"
@@ -189,160 +189,175 @@ function WizardPageInner() {
               </div>
             </div>
 
-            <div
-              key={stegId}
-              className={cn(
-                "flex flex-1 flex-col",
-                direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
-              )}
-            >
-              {tema ? (
-                <span className="mb-0.5 inline-flex self-start rounded-full bg-[#EFEAE0] px-2.5 py-0.5 text-[13px] font-medium text-ink/60">
-                  {tema}
-                </span>
-              ) : null}
-              {stegId === "adresse" && (
-                <StepAdresse
-                  fra={data.fra}
-                  til={data.til}
-                  fraCoord={data.fraCoord}
-                  tilCoord={data.tilCoord}
-                  utenlands={data.utenlands}
-                  initialCenter={initialCenter}
-                  onFra={(v, coord) => {
-                    update("fra", v);
-                    if (coord !== undefined) update("fraCoord", coord);
-                  }}
-                  onTil={(v, coord) => {
-                    update("til", v);
-                    if (coord !== undefined) update("tilCoord", coord);
-                  }}
-                  onUtenlands={(v) => update("utenlands", v)}
-                />
-              )}
-              {stegId === "kunde" && (
-                <StepKunde
-                  kunde={data.kunde}
-                  onKunde={(v) =>
-                    // Bytter du mellom privat og bedrift, passer ikke boligtypene lenger.
-                    setData((d) => ({
-                      ...d,
-                      kunde: v,
-                      tjeneste:
-                        v === "bedrift" && d.tjeneste === "dodsbo" ? "" : d.tjeneste,
-                      fraBolig: { ...d.fraBolig, type: "", heis: null },
-                      tilBolig: { ...d.tilBolig, type: "", heis: null },
-                    }))
-                  }
-                />
-              )}
-              {stegId === "tjeneste" && (
-                <StepTjeneste
-                  kunde={data.kunde}
-                  tjeneste={data.tjeneste}
-                  onTjeneste={(v) => update("tjeneste", v)}
-                />
-              )}
-              {stegId === "fraType" && (
-                <StepBoligType
-                  retning="fra"
-                  kunde={data.kunde}
-                  bolig={data.fraBolig}
-                  onChange={(b) => updateBolig("fraBolig", b)}
-                />
-              )}
-              {stegId === "fraDetaljer" && (
-                <StepBoligDetaljer
-                  retning="fra"
-                  kunde={data.kunde}
-                  bolig={data.fraBolig}
-                  onChange={(b) => updateBolig("fraBolig", b)}
-                />
-              )}
-              {stegId === "fraParkering" && (
-                <StepBoligParkering
-                  retning="fra"
-                  bolig={data.fraBolig}
-                  onChange={(b) => updateBolig("fraBolig", b)}
-                />
-              )}
-              {stegId === "tilType" && (
-                <StepBoligType
-                  retning="til"
-                  kunde={data.kunde}
-                  bolig={data.tilBolig}
-                  onChange={(b) => updateBolig("tilBolig", b)}
-                />
-              )}
-              {stegId === "tilDetaljer" && (
-                <StepBoligDetaljer
-                  retning="til"
-                  kunde={data.kunde}
-                  bolig={data.tilBolig}
-                  onChange={(b) => updateBolig("tilBolig", b)}
-                />
-              )}
-              {stegId === "tilParkering" && (
-                <StepBoligParkering
-                  retning="til"
-                  bolig={data.tilBolig}
-                  onChange={(b) => updateBolig("tilBolig", b)}
-                />
-              )}
-              {stegId === "spesial" && (
-                <StepSpesial
-                  spesial={data.spesial}
-                  detaljer={data.spesialDetaljer}
-                  onSpesial={(v) => update("spesial", v)}
-                  onDetaljer={(v) => update("spesialDetaljer", v)}
-                />
-              )}
-              {stegId === "beskrivelse" && (
-                <StepBeskrivelse
-                  beskrivelse={data.beskrivelse}
-                  bilder={data.bilder}
-                  onBeskrivelse={(v) => update("beskrivelse", v)}
-                  onBilder={(v) => update("bilder", v)}
-                />
-              )}
-              {stegId === "dato" && (
-                <StepDato
-                  dato={data.flyttedato}
-                  onDato={(v) => update("flyttedato", v)}
-                />
-              )}
-              {stegId === "fleksibilitet" && (
-                <StepFleksibilitet
-                  fleksibilitet={data.fleksibilitet}
-                  onFleksibilitet={(v) => update("fleksibilitet", v)}
-                />
-              )}
-              {stegId === "ekstra" && (
-                <StepEkstra
-                  ekstra={data.ekstra}
-                  onEkstra={(v) => update("ekstra", v)}
-                />
-              )}
-              {stegId === "kontakt" && (
-                <StepKontakt
-                  kunde={data.kunde}
-                  navn={data.navn}
-                  firma={data.firma}
-                  telefon={data.telefon}
-                  epost={data.epost}
-                  onNavn={(v) => update("navn", v)}
-                  onFirma={(v) => update("firma", v)}
-                  onTelefon={(v) => update("telefon", v)}
-                  onEpost={(v) => update("epost", v)}
-                />
-              )}
-              {stegId === "kvittering" && (
-                <StepKvittering data={data} onGoTo={goTo} />
-              )}
+            {/* Innholdet ruller på mobil, topp og bunn står fast. Fade viser at det er mer. */}
+            <div className="relative min-h-0 flex-1 lg:flex lg:flex-col">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 z-10 h-5 bg-gradient-to-b from-bg to-transparent lg:hidden"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-10 bg-gradient-to-t from-bg to-transparent lg:hidden"
+              />
+              <div className="h-full overflow-y-auto py-2 [scrollbar-width:none] lg:flex lg:h-auto lg:flex-1 lg:flex-col lg:overflow-visible lg:py-0">
+                <div
+                  key={stegId}
+                  className={cn(
+                    "flex flex-1 flex-col",
+                    direction > 0 ? "wizard-slide-right" : "wizard-slide-left",
+                  )}
+                >
+                  {tema ? (
+                    <span className="mb-0.5 inline-flex self-start rounded-full bg-[#EFEAE0] px-2.5 py-0.5 text-[13px] font-medium text-ink/60">
+                      {tema}
+                    </span>
+                  ) : null}
+                  {stegId === "adresse" && (
+                    <StepAdresse
+                      fra={data.fra}
+                      til={data.til}
+                      fraCoord={data.fraCoord}
+                      tilCoord={data.tilCoord}
+                      utenlands={data.utenlands}
+                      initialCenter={initialCenter}
+                      onFra={(v, coord) => {
+                        update("fra", v);
+                        if (coord !== undefined) update("fraCoord", coord);
+                      }}
+                      onTil={(v, coord) => {
+                        update("til", v);
+                        if (coord !== undefined) update("tilCoord", coord);
+                      }}
+                      onUtenlands={(v) => update("utenlands", v)}
+                    />
+                  )}
+                  {stegId === "kunde" && (
+                    <StepKunde
+                      kunde={data.kunde}
+                      onKunde={(v) =>
+                        // Bytter du mellom privat og bedrift, passer ikke boligtypene lenger.
+                        setData((d) => ({
+                          ...d,
+                          kunde: v,
+                          tjeneste:
+                            v === "bedrift" && d.tjeneste === "dodsbo"
+                              ? ""
+                              : d.tjeneste,
+                          fraBolig: { ...d.fraBolig, type: "", heis: null },
+                          tilBolig: { ...d.tilBolig, type: "", heis: null },
+                        }))
+                      }
+                    />
+                  )}
+                  {stegId === "tjeneste" && (
+                    <StepTjeneste
+                      kunde={data.kunde}
+                      tjeneste={data.tjeneste}
+                      onTjeneste={(v) => update("tjeneste", v)}
+                    />
+                  )}
+                  {stegId === "fraType" && (
+                    <StepBoligType
+                      retning="fra"
+                      kunde={data.kunde}
+                      bolig={data.fraBolig}
+                      onChange={(b) => updateBolig("fraBolig", b)}
+                    />
+                  )}
+                  {stegId === "fraDetaljer" && (
+                    <StepBoligDetaljer
+                      retning="fra"
+                      kunde={data.kunde}
+                      bolig={data.fraBolig}
+                      onChange={(b) => updateBolig("fraBolig", b)}
+                    />
+                  )}
+                  {stegId === "fraParkering" && (
+                    <StepBoligParkering
+                      retning="fra"
+                      bolig={data.fraBolig}
+                      onChange={(b) => updateBolig("fraBolig", b)}
+                    />
+                  )}
+                  {stegId === "tilType" && (
+                    <StepBoligType
+                      retning="til"
+                      kunde={data.kunde}
+                      bolig={data.tilBolig}
+                      onChange={(b) => updateBolig("tilBolig", b)}
+                    />
+                  )}
+                  {stegId === "tilDetaljer" && (
+                    <StepBoligDetaljer
+                      retning="til"
+                      kunde={data.kunde}
+                      bolig={data.tilBolig}
+                      onChange={(b) => updateBolig("tilBolig", b)}
+                    />
+                  )}
+                  {stegId === "tilParkering" && (
+                    <StepBoligParkering
+                      retning="til"
+                      bolig={data.tilBolig}
+                      onChange={(b) => updateBolig("tilBolig", b)}
+                    />
+                  )}
+                  {stegId === "spesial" && (
+                    <StepSpesial
+                      spesial={data.spesial}
+                      detaljer={data.spesialDetaljer}
+                      onSpesial={(v) => update("spesial", v)}
+                      onDetaljer={(v) => update("spesialDetaljer", v)}
+                    />
+                  )}
+                  {stegId === "beskrivelse" && (
+                    <StepBeskrivelse
+                      beskrivelse={data.beskrivelse}
+                      bilder={data.bilder}
+                      onBeskrivelse={(v) => update("beskrivelse", v)}
+                      onBilder={(v) => update("bilder", v)}
+                    />
+                  )}
+                  {stegId === "dato" && (
+                    <StepDato
+                      dato={data.flyttedato}
+                      onDato={(v) => update("flyttedato", v)}
+                    />
+                  )}
+                  {stegId === "fleksibilitet" && (
+                    <StepFleksibilitet
+                      fleksibilitet={data.fleksibilitet}
+                      onFleksibilitet={(v) => update("fleksibilitet", v)}
+                    />
+                  )}
+                  {stegId === "ekstra" && (
+                    <StepEkstra
+                      ekstra={data.ekstra}
+                      onEkstra={(v) => update("ekstra", v)}
+                    />
+                  )}
+                  {stegId === "kontakt" && (
+                    <StepKontakt
+                      kunde={data.kunde}
+                      navn={data.navn}
+                      firma={data.firma}
+                      telefon={data.telefon}
+                      epost={data.epost}
+                      onNavn={(v) => update("navn", v)}
+                      onFirma={(v) => update("firma", v)}
+                      onTelefon={(v) => update("telefon", v)}
+                      onEpost={(v) => update("epost", v)}
+                    />
+                  )}
+                  {stegId === "kvittering" && (
+                    <StepKvittering data={data} onGoTo={goTo} />
+                  )}
+                </div>
+              </div>
             </div>
 
-            {/* Knapper: alltid nederst i kortet */}
-            <div className="mt-7 flex items-center justify-between gap-4">
+            {/* Knapper: alltid synlige nederst */}
+            <div className="mt-4 flex shrink-0 items-center justify-between gap-4 lg:mt-7">
               {index > 0 ? (
                 <button
                   type="button"
