@@ -33,10 +33,6 @@ export function Services() {
           <h2 className="text-3xl font-semibold text-ink sm:text-[42px] sm:leading-[1.1]">
             Alt du trenger på ett sted
           </h2>
-          <span
-            aria-hidden
-            className="mt-3 inline-block h-1 w-16 rounded-full bg-accent-amber"
-          />
         </div>
         <div className="mt-12 grid gap-4 sm:gap-6 md:grid-cols-3">
           {services.map((s) => (

@@ -66,7 +66,7 @@ export function HeroCard({
   endVisual?: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto w-full max-w-[400px] rounded-[14px] bg-surface-soft p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_32px_-16px_rgba(0,0,0,0.10)] ring-1 ring-black/[0.04]">
+    <div className="mx-auto w-full max-w-[400px] lg:max-w-none rounded-[14px] bg-surface-soft p-6 lg:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03),0_12px_32px_-16px_rgba(0,0,0,0.10)] ring-1 ring-black/[0.04]">
       <HeroIcons endVisual={endVisual} />
       {title ? (
         <h2 className="mt-7 text-center text-xl font-medium tracking-tight text-ink lg:text-2xl">
