@@ -70,7 +70,7 @@ export function StepKontakt({
           />
         </div>
       </div>
-      <p className="mt-5 text-[13px] leading-snug text-ink/40">
+      <p className="mt-5 text-sm leading-snug text-ink/40 lg:text-[13px]">
         Gratis og uforpliktende. Kontaktinfoen din deles kun med de tre byråene
         som får forespørselen.
       </p>

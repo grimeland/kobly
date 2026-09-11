@@ -208,7 +208,7 @@ function WizardPageInner() {
                   )}
                 >
                   {tema ? (
-                    <span className="mb-0.5 inline-flex self-start rounded-full bg-[#EFEAE0] px-2.5 py-0.5 text-[13px] font-medium text-ink/60">
+                    <span className="mb-0.5 inline-flex self-start rounded-full bg-[#EFEAE0] px-2.5 py-0.5 text-sm font-medium text-ink/60 lg:text-[13px]">
                       {tema}
                     </span>
                   ) : null}
@@ -362,7 +362,7 @@ function WizardPageInner() {
                 <button
                   type="button"
                   onClick={back}
-                  className="inline-flex min-h-[48px] items-center rounded-full px-2 text-[15px] text-ink/55 transition-colors hover:text-ink"
+                  className="inline-flex min-h-[48px] items-center rounded-full px-2 text-base text-ink/55 lg:text-[15px] transition-colors hover:text-ink"
                 >
                   Tilbake
                 </button>
@@ -374,7 +374,7 @@ function WizardPageInner() {
                 onClick={next}
                 disabled={!valid}
                 className={cn(
-                  "inline-flex min-h-[52px] items-center gap-2 rounded-full px-7 text-[15px] font-medium transition-colors",
+                  "inline-flex min-h-[52px] items-center gap-2 rounded-full px-7 text-base font-medium transition-colors lg:text-[15px]",
                   valid
                     ? "bg-brand text-brand-ink hover:bg-brand/90"
                     : "cursor-not-allowed bg-ink/10 text-ink/35",

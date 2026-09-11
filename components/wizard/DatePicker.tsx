@@ -70,7 +70,7 @@ export function DatePicker({
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
-      <div className="grid grid-cols-7 text-center text-[11px] text-ink/40">
+      <div className="grid grid-cols-7 text-center text-xs text-ink/40 lg:text-[11px]">
         {UKEDAGER.map((d) => (
           <span key={d} className="py-1">
             {d}
@@ -92,7 +92,7 @@ export function DatePicker({
               onClick={() => onChange(key)}
               aria-pressed={selected}
               className={cn(
-                "mx-auto flex h-11 w-11 items-center justify-center rounded-full text-[15px] transition-colors",
+                "mx-auto flex h-11 w-11 items-center justify-center rounded-full text-base transition-colors lg:text-[15px]",
                 selected
                   ? "bg-brand font-medium text-brand-ink"
                   : disabled

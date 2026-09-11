@@ -86,7 +86,7 @@ export function StepAdresse({
           aria-checked={utenlands}
           onClick={() => onUtenlands(!utenlands)}
           className={cn(
-            "inline-flex min-h-[48px] items-center gap-3 self-start rounded-full border-[1.5px] px-5 text-[15px] transition-colors",
+            "inline-flex min-h-[48px] items-center gap-3 self-start rounded-full border-[1.5px] px-5 text-base transition-colors lg:text-[15px]",
             utenlands
               ? "border-brand bg-[#EDE5D8] text-ink"
               : "border-dashed border-ink/20 text-ink/60 hover:border-ink/40",

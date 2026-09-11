@@ -25,7 +25,7 @@ export function StepKvittering({
             key={`${r.label}-${i}`}
             className="grid grid-cols-[1fr_auto] items-start gap-x-2 py-2 sm:grid-cols-[7.5rem_1fr_auto]"
           >
-            <dt className="text-[13px] leading-snug text-ink/45 sm:pt-0.5">
+            <dt className="text-sm leading-snug text-ink/45 sm:pt-0.5 lg:text-[13px]">
               {r.label}
             </dt>
             <button
@@ -36,7 +36,7 @@ export function StepKvittering({
             >
               <Pencil className="h-3.5 w-3.5" />
             </button>
-            <dd className="m-0 text-sm leading-snug text-ink sm:col-start-2 sm:row-start-1">
+            <dd className="m-0 text-base leading-snug text-ink sm:col-start-2 sm:row-start-1 lg:text-sm">
               {r.value}
             </dd>
           </div>

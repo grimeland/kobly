@@ -17,7 +17,7 @@ export function StepHeader({
         {title}
       </h1>
       {subtitle ? (
-        <p className="m-0 text-[15px] leading-snug text-ink/55">{subtitle}</p>
+        <p className="m-0 text-base leading-snug text-ink/55 lg:text-[15px]">{subtitle}</p>
       ) : null}
     </div>
   );
@@ -32,8 +32,8 @@ export function FieldLabel({
 }) {
   return (
     <div className="mb-2 flex items-baseline justify-between gap-3">
-      <span className="text-[15px] font-medium text-ink">{children}</span>
-      {hint ? <span className="text-xs text-ink/40">{hint}</span> : null}
+      <span className="text-base font-medium text-ink lg:text-[15px]">{children}</span>
+      {hint ? <span className="text-sm text-ink/40 lg:text-xs">{hint}</span> : null}
     </div>
   );
 }
@@ -190,9 +190,9 @@ export function Choice({
         {selected ? <Check className="h-3 w-3 text-brand-ink" /> : null}
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-[15px] font-medium leading-tight">{label}</span>
+        <span className="text-base font-medium leading-tight lg:text-[15px]">{label}</span>
         {hint ? (
-          <span className="mt-0.5 text-[13px] leading-tight text-ink/45">
+          <span className="mt-0.5 text-sm leading-tight text-ink/45 lg:text-[13px]">
             {hint}
           </span>
         ) : null}
