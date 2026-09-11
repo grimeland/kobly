@@ -139,9 +139,9 @@ function WizardPageInner() {
   const tema = temaFor(stegId, data.kunde === "bedrift");
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center bg-bg">
-      {/* Bakgrunn: ett rolig bilde, mørkere på mobil så kortet står fram */}
-      <div className="absolute inset-0" aria-hidden>
+    <div className="relative flex min-h-dvh flex-col items-center bg-surface-soft lg:bg-bg">
+      {/* Bakgrunn: kun desktop. På mobil fyller flaten hele skjermen. */}
+      <div className="absolute inset-0 hidden lg:block" aria-hidden>
         <Image
           src="/images/boxes-and-plants.jpg"
           alt=""
@@ -150,29 +150,24 @@ function WizardPageInner() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/60 lg:bg-bg/85" />
+        <div className="absolute inset-0 bg-bg/85" />
       </div>
 
       {/* Logo */}
-      <div className="relative z-10 w-full max-w-[1060px] px-5 pt-6 pb-4 sm:px-8 lg:pt-7 lg:text-center">
+      <div className="relative z-10 w-full max-w-[1060px] px-5 pt-5 pb-2 sm:px-8 lg:pt-7 lg:pb-4 lg:text-center">
         <Link href="/" aria-label="Kobly hjem" className="inline-block">
-          <span className="lg:hidden">
-            <Logo tone="brand-ink" />
-          </span>
-          <span className="hidden lg:inline-block">
-            <Logo />
-          </span>
+          <Logo />
         </Link>
       </div>
 
       {/* Kortet */}
-      <div className="relative z-10 flex w-full max-w-[1060px] flex-1 flex-col px-4 pb-6 sm:px-8 lg:justify-center lg:pb-10">
+      <div className="relative z-10 flex w-full max-w-[1060px] flex-1 flex-col lg:justify-center lg:px-8 lg:pb-10">
         <div
           ref={cardRef}
-          className="flex min-h-[min(600px,calc(100dvh-7.5rem))] w-full flex-col overflow-hidden rounded-[18px] bg-surface-soft shadow-[0_20px_60px_rgba(0,0,0,0.28),0_4px_16px_rgba(0,0,0,0.10)] lg:min-h-[600px] lg:flex-row"
+          className="flex w-full flex-1 flex-col bg-surface-soft lg:min-h-[600px] lg:flex-row lg:overflow-hidden lg:rounded-[18px] lg:shadow-[0_20px_60px_rgba(0,0,0,0.28),0_4px_16px_rgba(0,0,0,0.10)]"
         >
           {/* Venstre: framdrift, spørsmål, knapper */}
-          <div className="flex flex-1 flex-col p-5 sm:p-8 lg:flex-[0_0_58%] lg:p-11">
+          <div className="flex flex-1 flex-col px-5 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-8 lg:flex-[0_0_58%] lg:p-11">
             <div className="mb-8 flex items-center gap-3">
               <div
                 className="flex flex-1 gap-[3px]"
