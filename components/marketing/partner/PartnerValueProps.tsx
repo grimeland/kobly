@@ -36,7 +36,7 @@ export function PartnerValueProps() {
               key={p.title}
               className="flex flex-col rounded-[14px] bg-surface-soft p-6 ring-1 ring-line sm:p-7 lg:p-8"
             >
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[14px] bg-accent-lime text-[#3D5507]">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-[14px] bg-accent-lime text-accent-lime-ink">
                 <p.icon className="h-5 w-5" strokeWidth={2} />
               </span>
               <h3 className="mt-5 text-2xl font-semibold text-ink">

@@ -19,7 +19,7 @@ export function MobileMenu({
   return (
     <FullscreenOverlay open={open} onClose={onClose} label="Meny">
       <div className="flex items-center justify-between px-6 py-4 sm:px-10">
-        <Link href="/" aria-label="Kobly hjem" onClick={onClose}>
+        <Link href="/kobly" aria-label="Kobly hjem" onClick={onClose}>
           <Logo />
         </Link>
         <button

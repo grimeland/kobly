@@ -34,11 +34,11 @@ function HeroIcons({ endVisual }: { endVisual?: React.ReactNode }) {
         <span className="h-1.5 w-1.5 rounded-full bg-ink/25" />
       </span>
       {endVisual ?? (
-        <span className="inline-flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent-lime">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-[14px] bg-accent-lime text-accent-lime-ink">
         <svg width="28" height="28" viewBox="0 0 42 42" fill="none" aria-hidden>
           <path
             d="M20.6 33.27V20.74M20.6 20.74 9.69 14.48M20.6 20.74l10.91-6.26M14.96 11.06l11.27 6.45M19.35 32.93c.38.22.81.34 1.25.34s.87-.12 1.25-.34l8.77-5.01c.38-.22.7-.54.92-.92.22-.38.34-.81.34-1.25V15.73c0-.44-.12-.87-.34-1.25-.22-.38-.54-.7-.92-.92l-8.77-5.01c-.38-.22-.81-.34-1.25-.34s-.87.12-1.25.34l-8.77 5.01c-.38.22-.7.54-.92.92-.22.38-.34.81-.34 1.25v10.02c0 .44.12.87.34 1.25.22.38.54.7.92.92l8.77 5.01Z"
-            stroke="#3D5507"
+            stroke="currentColor"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

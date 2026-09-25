@@ -31,7 +31,7 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between py-4">
-        <Link href="/" aria-label="Kobly hjem" className="no-underline">
+        <Link href="/kobly" aria-label="Kobly hjem" className="no-underline">
           <Logo />
         </Link>
         <button

@@ -34,6 +34,7 @@
   --color-brand: var(--brand);
   --color-brand-ink: var(--brand-ink);
   --color-accent-lime: var(--accent-lime);
+  --color-accent-lime-ink: var(--accent-lime-ink);
   --color-accent-amber: var(--accent-amber);
   --color-move: var(--move);
 
@@ -77,6 +78,7 @@
   --brand: #221814;
   --brand-ink: #faf9f6;
   --accent-lime: #d6e8a8;
+  --accent-lime-ink: #3d5507;
   --accent-amber: #e8a87c;
   --move: #2f5fa8;
 
@@ -104,6 +106,26 @@
   /* Override Tailwind defaults for font-* utilities */
   --font-sans: var(--font-moderat), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-crimson), ui-serif, Georgia, serif;
+}
+
+/* Prototype: eiendomsmegler-variant. Samme oppsett, paletten dratt mot blått.
+   Brukes som wrapper-klasse på /megler, overstyrer bare brand-tokens. */
+.theme-megler {
+  --bg: #edf1f7;
+  --surface: #ffffff;
+  --surface-soft: #f6f8fb;
+  --ink: #0f1e33;
+  --ink-muted: #4e5d74;
+  --line: #d6deea;
+
+  --brand: #10264a;
+  --brand-ink: #f3f6fb;
+  --accent-lime: #c7dbf4;
+  --accent-lime-ink: #1b4a8c;
+  --accent-amber: #e8c27c;
+
+  --secondary: #e2e8f2;
+  --muted: #e2e8f2;
 }
 
 @layer base {

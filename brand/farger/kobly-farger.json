@@ -1,0 +1,15 @@
+{
+  "bakgrunn": { "hex": "#F4F1EA", "bruk": "Sidebakgrunn, den varme kremtonen" },
+  "flate": { "hex": "#FFFFFF", "bruk": "Kort og paneler" },
+  "flate-myk": { "hex": "#FAF9F6", "bruk": "Sekundære flater" },
+  "blekk": { "hex": "#1A1A1A", "bruk": "Brødtekst og overskrifter" },
+  "blekk-dempet": { "hex": "#5C5C5C", "bruk": "Sekundær tekst" },
+  "logo": { "hex": "#232323", "bruk": "Logo på lys bakgrunn" },
+  "linje": { "hex": "#E6E1D6", "bruk": "Rammer og skillelinjer" },
+  "sekundaer": { "hex": "#EFEAE0", "bruk": "Dempede flater og chips" },
+  "merke": { "hex": "#221814", "bruk": "Primærknapper og mørke seksjoner" },
+  "merke-blekk": { "hex": "#FAF9F6", "bruk": "Tekst og logo på mørk bakgrunn" },
+  "aksent-lime": { "hex": "#D6E8A8", "bruk": "Uthevinger og ikonbakgrunn" },
+  "aksent-rav": { "hex": "#E8A87C", "bruk": "Sekundær aksent" },
+  "flytt-blaa": { "hex": "#2F5FA8", "bruk": "Kart og flyttemarkører" }
+}

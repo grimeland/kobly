@@ -11,9 +11,8 @@ const baseTiles = [
 
 // Duplisér nok ganger til at "halve" tracken er bredere enn viewport,
 // slik at translateX(-50%) gir et sømløst loop.
-const tiles = Array.from({ length: 4 }, () => baseTiles).flat();
-
-export function ImageStrip() {
+export function ImageStrip({ images = baseTiles }: { images?: string[] }) {
+  const tiles = Array.from({ length: 4 }, () => images).flat();
   return (
     <section className="pb-20 sm:pb-28 lg:pb-32">
       <div className="marquee-mask overflow-hidden">

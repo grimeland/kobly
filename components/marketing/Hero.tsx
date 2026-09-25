@@ -2,7 +2,15 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HeroCard } from "./HeroCard";
 
-export function Hero() {
+export function Hero({
+  title = "Vi finner det beste flyttebyrået for deg",
+  lead = "Kobly kobler deg med kvalitetssjekkede byråer i ditt område",
+  card,
+}: {
+  title?: string;
+  lead?: string;
+  card?: React.ComponentProps<typeof HeroCard>;
+}) {
   return (
     <section className="px-6 pt-8 pb-12 sm:px-10 sm:pt-12 sm:pb-16 lg:pt-28 lg:pb-40">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
@@ -11,10 +19,10 @@ export function Hero() {
             Norges smarteste tilbudstjeneste
           </p>
           <h1 className="text-balance font-serif text-[2rem] font-semibold leading-[1.05] text-ink sm:text-[2.5rem] lg:mt-3 lg:text-[3rem] lg:leading-[1.05] xl:text-[3.5rem]">
-            Vi finner det beste flyttebyrået for deg
+            {title}
           </h1>
           <p className="mt-4 max-w-md text-pretty text-base text-ink-muted lg:hidden">
-            Kobly kobler deg med kvalitetssjekkede byråer i ditt område
+            {lead}
           </p>
           <Link
             href="/wizard"
@@ -25,7 +33,7 @@ export function Hero() {
           </Link>
         </div>
         <div className="hidden lg:block">
-          <HeroCard />
+          <HeroCard {...card} />
         </div>
       </div>
     </section>
